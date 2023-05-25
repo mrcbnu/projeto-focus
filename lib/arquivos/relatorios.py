@@ -609,7 +609,7 @@ def vistoria(arquivo, data):
         
 
 def geraPlacasPicking(arquivo,data):
-    relatorio = f'lib/arquivos/relatorio/programacao/placas/placasPicking.pdf'
+    relatorio = f'lib/arquivos/relatorio/programacao/placasPicking.pdf'
     pdf = canvas.Canvas(relatorio, pagesize=A4)
     pdf.setLineWidth(1)
     try:
