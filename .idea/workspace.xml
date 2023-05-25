@@ -34,7 +34,10 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="atualização 2.0" />
+    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="ATUALIZAÇÃO NOME DO APLICATIVO NA TELA DE ABERTURA E ENCERRAMENTO">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -75,7 +78,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../agr-exped (1)" />
     <property name="settings.editor.selected.configurable" value="configurable.group.project" />
   </component>
   <component name="RecentsManager">
@@ -261,6 +264,14 @@
       <option name="presentableId" value="Default" />
       <updated>1598415244293</updated>
     </task>
+    <task id="LOCAL-00001" summary="ATUALIZAÇÃO NOME DO APLICATIVO NA TELA DE ABERTURA E ENCERRAMENTO">
+      <created>1684990556101</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1684990556101</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -291,5 +302,7 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
+    <MESSAGE value="ATUALIZAÇÃO NOME DO APLICATIVO NA TELA DE ABERTURA E ENCERRAMENTO" />
+    <option name="LAST_COMMIT_MESSAGE" value="ATUALIZAÇÃO NOME DO APLICATIVO NA TELA DE ABERTURA E ENCERRAMENTO" />
   </component>
 </project>

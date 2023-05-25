@@ -66,7 +66,7 @@ def main():
                         print(f'Arquivo {origem} não encontrado!')
                         input('pressione ENTER para continuar...')
                 elif op1 == 5:
-                    geraOCnovo(arq_1)
+                    geraOC(arq_1)
                     input('pressione ENTER para continuar...')
                 else:
                     break

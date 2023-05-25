@@ -212,6 +212,8 @@ def progDia(arq_hj, arq_geral, data='hoje'):
     linha('-', 42)
 
 
+
+
 def geraOC(arq):
     '''
 
@@ -222,16 +224,15 @@ def geraOC(arq):
     matriz = (
             'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI','TIJUCAS PALHOÇA', 'TUBARÃO', 'FPOLIS CENTRO',
             'SÃO JOSÉ', 'BNU SUL/LES', 'REUNIDAS', 'EXPRESSO', 'ARARANGUÁ', 'SÃO JOSÉ',
-            'FPOLIS CENTRO','JOINVILLE','BNU NOR/OES', 'REUNIDAS', 'EXPRESSO', 'JARAGUÁ DO SUL', 'SÃO JOSÉ',
+            'FPOLIS CENTRO','JLLE CEN/NOR','BNU NOR/OES', 'REUNIDAS', 'EXPRESSO', 'JARAGUÁ DO SUL', 'SÃO JOSÉ',
             'FPOLIS NORTE', 'PORTO BELO', 'BNU SUL/LES', 'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI',
-            'FPOLIS CENTRO', 'FPOLIS SUL', 'RIO DO SUL', 'LITORAL NORTE', 'JOINVILLE', 'REUNIDAS', 'EXPRESSO',
-            'MAFRA', 'BRUSQUE GASPAR', 'BNU NOR/OES', 'LAGES', 'CHAPECÓ'
+            'FPOLIS CENTRO', 'FPOLIS SUL', 'RIO DO SUL', 'LITORAL NORTE', 'JLLE CEN/SUL', 'REUNIDAS', 'EXPRESSO',
+            'MAFRA', 'BRUSQUE GASPAR', 'BNU NOR/OES', 'CHAPECÓ',
             )
     # PEGAR O ULTIMO REGISTRO DO ARQUIVO DE DADOS E USAR COMO PARAMETRO INICIAL
     with open(arq, 'r') as origem:
         for reg in origem:
             ultimo = reg.split(';')
-            oc = ultimo[0]
             data = datetime.strptime(ultimo[2], '%d/%m/%Y')
             data_ini = data + timedelta(days=1)
             data_ult = data_ini
@@ -250,8 +251,9 @@ def geraOC(arq):
                 print(f'{cor (3)}Opçãp inválida{cor (0)}')
         linha('-', 80, 1)
         cont = 0
+        oc = 101
         for item, valor in enumerate(matriz):
-            oc = int(oc) + 1
+
             cont += 1
             if valor == 'REUNIDAS':
                 if cont == 1:
@@ -263,11 +265,14 @@ def geraOC(arq):
                     semana = diaSemana(data_ult)
                 data_ult = datetime.strftime(data_ult, '%d/%m/%Y')
                 transp = '5219'
+                oct = 100
                 linha('-', )
                 print(f'{cor(13)}{data_ult} - {semana}{cor(0)}')
 
             elif valor == 'EXPRESSO':
                 transp = '6702'
+                oct = 101
+
             elif ('BALNEÁRIO' in valor) or ('ITAJAI' in valor) or ('JARAGUÁ' in valor):
                 transp = '5834'
             else:
@@ -275,17 +280,22 @@ def geraOC(arq):
             if valor != 'LAGES' or (valor == 'LAGES' and resp == 'S'):
                 try:
                     origem = open(arq, 'at')
-                    origem.write(f'{oc};{valor};{data_ult};{transp}\n')
-                    origem.close()
+                    if valor == 'REUNIDAS' or valor == 'EXPRESSO':
+                        origem.write(f'{oct};{valor};{data_ult};{transp}\n')
+                        origem.close()
+
+                    else:
+                        oc += 1
+                        origem.write(f'{oc};{valor};{data_ult};{transp}\n')
+                        origem.close()
                 except:
                     print(f'Ops! problemas em gravar dados')
                 else:
                     print(f'{cor (7)}OC {oc} - {valor} {cor (1)}cadastrado com sucesso!{cor (0)}')
 
             else:
-                oc = int(oc) - 1
+                oc -= 1
 
         data_ult = datetime.strptime(data_ult, '%d/%m/%Y')
         relatorios.geraListagemRoteiro(arq, data_ini, data_ult)
         relatorios.oc_periodo(arq, data_ini, data_ult)
-
