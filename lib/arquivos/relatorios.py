@@ -663,7 +663,7 @@ def geraPlacasPicking(arquivo,data):
                             novaPag = True
                             pdf.showPage()
     pdf.save()
-    imprime(relatorio)
+    return relatorio
 
 
 def imprime(arquivo, copias):

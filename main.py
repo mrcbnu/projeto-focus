@@ -130,13 +130,16 @@ def main():
             while True:
                 op4 = menu(['PLACAS DE HOJE', 'PLACAS FORA DE ROTA', 'MENU PRINCIPAL'], 'IMPRESSÃO DE PLACAS DO PICKING')
                 if op4 == 1:
-                    geraPlacasPicking(arq_1, hoje)
+                    placas = geraPlacasPicking(arq_1, hoje)
+                    imprime(placas, 1)
                 if op4 == 2:
                     dtfora = leiaData('Digite a data do roteiro que deseja imprimir [dd/mm/aaa]: ')
                     dtfora = dtfora.strftime('%d/%m/%Y')
-                    geraPlacasPicking(arq_1, dtfora)
+                    placas = geraPlacasPicking(arq_1, dtfora)
+                    imprime(placas, 1)
                 if op4 == 3:
                     break
+
         elif op == 5: # ENCERRA
             break
         else:
