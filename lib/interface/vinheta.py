@@ -1,7 +1,7 @@
 def abertura():
     print('''
             ┌────────────────────────────────────────────────────────┐
-            │                      AgroLog v1.0                      │
+            │                      FOCUS v1.0                        │
             │                                                        │
             │                                                        │
             │       Este aplicativo tem como função principal        │
@@ -21,7 +21,7 @@ def abertura():
 def encerra():
     print('''
             ┌────────────────────────────────────────────────────────┐
-            │                      AgroLog v1.0                      │
+            │                      FOCUS v1.0                        │
             │                                                        │
             │                                                        │
             │                                                        │
