@@ -1,6 +1,8 @@
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from time import sleep, strptime
+from lib.arquivos.ordemcarga import *
+from lib.arquivos.relatorios import pdftojpg
 
 def mm(x):
     return x / 0.352777
@@ -309,3 +311,6 @@ def escalacao(dados):
         linInf -= 20
         tex -= 20
     div.save()
+    destinoimagem = 'lib/arquivos/relatorio/programacao'
+    imagem = pdftojpg(arquivo, destinoimagem)
+    return imagem

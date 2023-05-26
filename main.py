@@ -8,6 +8,7 @@ from lib.interface.vinheta import *
 from lib.arquivos.relatorio.fusion import *
 import pandas as pd
 import os
+from PIL import Image
 
 
 def main():
@@ -114,7 +115,10 @@ def main():
                         imprime(vist, 1)
 
                         cabecalho('-', 'GERANDO ESCALAÇÃO')
-                        escalacao(dados)
+                        escala = escalacao(dados)
+                        print(escala)
+                        imagem = Image.open(escala)
+                        imagem.show()
 
                     input('pressione ENTER para continuar...')
                 elif opc == 4:

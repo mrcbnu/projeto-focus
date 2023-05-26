@@ -7,7 +7,7 @@ from lib.interface.valida import diaSemana
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 import subprocess
-import shutil
+import fitz
 import os
 
 
@@ -172,7 +172,7 @@ def divulga(arq_data, data):
             div.save()
 
         diretorio = os.getcwd().replace("\\", "/") + '/'
-        arq_jpg = f'lib/arquivos/relatorio/programacao/prog {data}.jpg'
+        arq_jpg = f'lib/arquivos/relatorio/programacao/escalacao.jpg'
 
         # converter em imagem
         while not arqExiste(arquivo):
@@ -665,6 +665,15 @@ def geraPlacasPicking(arquivo,data):
     pdf.save()
     return relatorio
 
+
+def pdftojpg(pdf_path, output_dir):
+    doc = fitz.open(pdf_path)
+    for i in range(len(doc)):
+        page = doc.load_page(i)
+        pix = page.get_pixmap()
+        imagem = f"{output_dir}/imagem_{i + 1}.jpg"
+        pix.save(imagem, "JPEG")
+    return imagem
 
 def imprime(arquivo, copias):
     diretorio = os.getcwd().replace("\\", "/") + '/' + str(arquivo)
