@@ -34,10 +34,14 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="ATUALIZAÇÃO CODIFICAÇÃO oc_semana1.txt">
+    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="release focus v1.260523">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorios.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1 (1).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana2.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/relatorios.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/interface/vinheta.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/interface/vinheta.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -308,7 +312,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685019893612</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="release focus v1.260523">
+      <created>1685096656737</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1685096656737</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -343,6 +354,7 @@
     <MESSAGE value="ATUALIZAÇÃO FUNÇÃO GERAOC()" />
     <MESSAGE value="ATUALIZAÇÃO FUNÇÃO geraPlacasPicking()" />
     <MESSAGE value="ATUALIZAÇÃO CODIFICAÇÃO oc_semana1.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="ATUALIZAÇÃO CODIFICAÇÃO oc_semana1.txt" />
+    <MESSAGE value="release focus v1.260523" />
+    <option name="LAST_COMMIT_MESSAGE" value="release focus v1.260523" />
   </component>
 </project>

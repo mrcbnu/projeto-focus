@@ -1,27 +1,35 @@
+from time import sleep
+
+
 def abertura():
     print('''
             ┌────────────────────────────────────────────────────────┐
-            │                      FOCUS v1.0                        │
-            │                                                        │
-            │                                                        │
-            │       Este aplicativo tem como função principal        │
-            │         automatizar os processos burocráticos          │ 
-            │        referente a geração e programação das OC.       │ 
             │                                                        │
             │                                                        │
             │                                                        │
-            │                     SEJA BEM VINDO!                    │
             │                                                        │
+            │                                                        │
+            │                                                        │
+            │          █▀▀▀▀  █▀▀▀▀█  █▀▀▀▀█  █    █   █▀▀▀█         │
+            │          █▄▄    █    █  █       █    █   █▄▄▄▄         │
+            │          █      █    █  █       █    █       █         │
+            │          █      █▄▄▄▄█  █▄▄▄▄█  █▄▄▄▄█   █▄▄▄█         │
+            │                                                        │
+            │                                                        │
+            │                                                        │
+            │                                                        │
+            │                                                        │
+            │                                                        │
+            │                   FOCUS v1.02062023                    │
             └────────────────────────────────────────────────────────┘
                                                                             ''')
-    input('''
-                    Pressione qualquer tecla para continuar
-                    ''')
+    sleep(0.5)
+
 
 def encerra():
     print('''
             ┌────────────────────────────────────────────────────────┐
-            │                      FOCUS v1.0                        │
+            │                  FOCUS v1.02062023                     │
             │                                                        │
             │                                                        │
             │                                                        │
@@ -34,3 +42,4 @@ def encerra():
             │                                                        │
             └────────────────────────────────────────────────────────┘
                                                                             ''')
+    sleep(2)

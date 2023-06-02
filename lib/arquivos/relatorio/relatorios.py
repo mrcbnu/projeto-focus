@@ -276,7 +276,7 @@ def geraListagemRoteiro(arquivo, ini, fim):
             pdf.setLineWidth(0.5)
             pdf.line(10, 20, 580,20)
             pdf.setFont('Helvetica', 8)
-            pdf.drawString(10, 10, 'Gerado por AgroLog v1.01 beta')
+            pdf.drawString(10, 10, 'Gerado por FOCUS v1.02062023')
 
     pdf.save()
     while True:

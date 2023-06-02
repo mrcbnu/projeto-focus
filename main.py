@@ -21,22 +21,30 @@ def main():
     se não encontrado será criado um novo 
     '''
     cabecalho('-', 'verificando arquivos...')
-    arq = ['lib/arquivos/database/oc_semana1.txt']
+    arq = ['lib/arquivos/database/oc_semana1.txt',
+           'lib/arquivos/ordemcarga.py',
+           'lib/arquivos/relatorio/relatorios.py',
+           'lib/arquivos/relatorio/comprovante.py',
+           'lib/arquivos/relatorio/fusion.py',
+           'lib/arquivos/relatorio/relatorios.py',
+           'lib/interface/valida.py',
+           'lib/interface/layout.py',
+           'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
+           ]
     arq_1 = 'lib/arquivos/database/oc_semana1.txt'
     origem = 'lib/arquivos/database/origem.txt'
-    temp = 'prog-1.jpg'
+    temp = 'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
 
     for chave, valor in enumerate(arq):
         if arqExiste(valor):
             print(f'Arquivo {cor(13)}{valor}{cor(0)} encontrado com sucesso')
-            sleep(0.2)
+            sleep(1)
         else:
             print(f'Arquivo {cor(3)}{valor} {cor(0)} não encontrado...')
-            sleep(0.2)
-            criarArquivo(valor)
-            sleep(0.2)
-    if arqExiste(temp):
-        os.remove(temp)
+            sleep(1)
+            #criarArquivo(valor)
+            #sleep(0.2)
+    sleep(3)
 
             #######    MENU PRINCIPAL    #########
     while True:
@@ -97,8 +105,7 @@ def main():
 
                 elif opc == 3:
                     try:
-                        dados = pd.read_csv(
-                            r"E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv")
+                        dados = pd.read_csv(temp)
 
                     except:
                         print(
@@ -121,6 +128,8 @@ def main():
                         imagem.show()
 
                     input('pressione ENTER para continuar...')
+                    if arqExiste(temp):
+                        os.remove(temp)
                 elif opc == 4:
                     break
                 else:
