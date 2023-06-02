@@ -23,10 +23,9 @@ def main():
     cabecalho('-', 'verificando arquivos...')
     arq = ['lib/arquivos/database/oc_semana1.txt',
            'lib/arquivos/ordemcarga.py',
-           'lib/arquivos/relatorio/relatorios.py',
            'lib/arquivos/relatorio/comprovante.py',
            'lib/arquivos/relatorio/fusion.py',
-           'lib/arquivos/relatorio/relatorios.py',
+           'lib/arquivos/relatorios.py',
            'lib/interface/valida.py',
            'lib/interface/layout.py',
            'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
@@ -42,8 +41,7 @@ def main():
         else:
             print(f'Arquivo {cor(3)}{valor} {cor(0)} não encontrado...')
             sleep(1)
-            #criarArquivo(valor)
-            #sleep(0.2)
+
     sleep(3)
 
             #######    MENU PRINCIPAL    #########
