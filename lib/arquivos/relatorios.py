@@ -90,8 +90,9 @@ def oc_periodo(arquivo, ini, fim):
             else:
                 print(f'{cor(3)}Opçãp inválida{cor(0)}')
         if resp == 'S':
-            imprime(local)
-
+            copias = leiaInt('Copias: ')
+            imprime(local, copias)
+            os.remove(local)
 
 def mm(x):
     return x / 0.352777
@@ -286,7 +287,8 @@ def geraListagemRoteiro(arquivo, ini, fim):
         else:
             print(f'{cor(3)}Opçãp inválida{cor(0)}')
     if resp == 'S':
-        imprime(relatorio)
+        copia = leiaInt('Cópias: ')
+        imprime(relatorio, copia)
     geraPlacas(arquivo, ini, fim)
 
 
@@ -371,7 +373,8 @@ def geraPlacas(arquivo, ini, fim):
         else:
             print(f'{cor(3)}Opçãp inválida{cor(0)}')
     if resp == 'S':
-        imprime(relatorio)
+        copia = leiaInt('Cópias: ')
+        imprime(relatorio, copia)
 
 
 def controleKM(arq,dt):
