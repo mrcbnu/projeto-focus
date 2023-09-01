@@ -57,34 +57,24 @@ def importaOC(arq_ori, arq_des):
             data_ini = data_fim = ''
             for novo in ori:
                 oc_ori = novo.split(';')
-                duplicado = False
-                with open(arq_des, 'r') as des:
-                    for antigo in des:
-                        oc_ant = antigo.split(';')
-                        if oc_ori[0] == oc_ant[0]:
-                            print(f'{cor(3)}OC {oc_ori[0]} já existe....{cor(0)}')
-                            sleep(0.1)
-                            duplicado = True
+                with open(arq_des, 'at') as des:
+                    try:
+                        des.write(f'{oc_ori[0]};{oc_ori[1]};{oc_ori[2]};{oc_ori[3]}')
+                    except:
+                        print(f'{cor(3)}Ops! problemas em gravar novo registro{cor(0)}')
+                    else:
+                        print(f'{cor(5)}Gravando registro....{cor(0)}')
+                        #sleep(0.25)
+                        print(f'{cor(7)}{oc_ori[0]} registrado com sucesso!{cor(0)}')
+                        cont += 1
+                        if cont == 1:
+                            data_ini = datetime.strptime(oc_ori[2], '%d/%m/%Y')
 
-                if not duplicado:
-                    with open(arq_des, 'at') as des:
-                        try:
-                            des.write(f'{oc_ori[0]};{oc_ori[1]};{oc_ori[2]};{oc_ori[3]}')
-                        except:
-                            print(f'{cor(3)}Ops! problemas em gravar novo registro{cor(0)}')
                         else:
-                            print(f'{cor(5)}Gravando registro....{cor(0)}')
-                            #sleep(0.25)
-                            print(f'{cor(7)}{oc_ori[0]} registrado com sucesso!{cor(0)}')
-                            cont += 1
-                            if cont == 1:
-                                data_ini = datetime.strptime(oc_ori[2], '%d/%m/%Y')
+                            data_fim = datetime.strptime(oc_ori[2], '%d/%m/%Y')
 
-                            else:
-                                data_fim = datetime.strptime(oc_ori[2], '%d/%m/%Y')
-
-            relatorios.geraListagemRoteiro(arq_des, data_ini, data_fim)
-            relatorios.oc_periodo(arq_des, data_ini, data_fim)
+        relatorios.geraListagemRoteiro(arq_des, data_ini, data_fim)
+        relatorios.oc_periodo(arq_des, data_ini, data_fim)
     try:
         ori.close()
     except:
