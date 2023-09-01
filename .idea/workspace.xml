@@ -34,10 +34,11 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="release focus v1.02062023">
+    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="release focus v1.02062023.1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/relatorios1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorios.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,13 +76,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../agr-exped (1)" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.project" />
-  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;last_opened_file_path&quot;: &quot;D:/agr-exped/main.py&quot;
+  }
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\agr-exped\lib\arquivos\database" />
@@ -98,7 +97,7 @@
       <recent name="C:\Users\mrc_b\Documents\MeusProjetos\agr-exped\lib\arquivos" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main (1)">
+  <component name="RunManager" selected="Python.main">
     <configuration name="TESTE" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="agr-exped" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -153,7 +152,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\mrc_b\Documents\MeusProjetos\agr-exped\lib\main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -246,6 +245,14 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.TESTE" />
+      <item itemvalue="Python.main (1)" />
+      <item itemvalue="Python.teste (2)" />
+      <item itemvalue="Python.teste2 (1)" />
+      <item itemvalue="Python.teste" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main (1)" />
@@ -321,7 +328,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685678711926</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="release focus v1.02062023">
+      <created>1685680560199</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1685680560199</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -346,7 +360,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
