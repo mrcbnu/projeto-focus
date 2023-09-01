@@ -28,11 +28,11 @@ def main():
            'lib/arquivos/relatorios.py',
            'lib/interface/valida.py',
            'lib/interface/layout.py',
-           'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
+           r'C:\Users\faturamento-01\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
            ]
     arq_1 = 'lib/arquivos/database/oc_semana1.txt'
     origem = 'lib/arquivos/database/origem.txt'
-    temp = 'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
+    temp = r'C:\Users\faturamento-01\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
 
     for chave, valor in enumerate(arq):
         if arqExiste(valor):
@@ -44,11 +44,11 @@ def main():
 
     sleep(3)
 
-            #######    MENU PRINCIPAL    #########
+    #######    MENU PRINCIPAL    #########
     while True:
         os.system('cls')
         op = menu(['ORDENS DE CARGA', 'PROGRAMAÇÃO', 'COMPROVANTE', 'PLACAS PICKING', 'SAIR'], 'MENU PRINCIPAL')
-        if op == 1: # ORDENS DE CARGA
+        if op == 1:  # ORDENS DE CARGA
             while True:
                 os.system('cls')
                 op1 = menu(['OC HOJE', 'OC PERIODO', 'INCLUIR', 'IMPORTAR', 'GERAR', 'VOLTAR'],
@@ -77,7 +77,7 @@ def main():
                     input('pressione ENTER para continuar...')
                 else:
                     break
-        elif op == 2: # PROGRAMAÇÃO
+        elif op == 2:  # PROGRAMAÇÃO
             while True:
                 os.system('cls')
                 opc = menu(['HOJE', 'FORA DA ROTA', 'FUSION', 'MENU PRINCIPAL'], 'PROGRAMAÇÃO')
@@ -132,14 +132,15 @@ def main():
                     break
                 else:
                     print(f'{cor(3)}OPÇÃO INVÁLIDA... TENTE NOVAMENTE!{cor(0)}')
-                    
-        elif op == 3: # COMPROVANTE
-            comprovante()            
+
+        elif op == 3:  # COMPROVANTE
+            comprovante()
             input('pressione ENTER para continuar....')
 
-        elif op == 4: # PLACAS ROTEIRO
+        elif op == 4:  # PLACAS ROTEIRO
             while True:
-                op4 = menu(['PLACAS DE HOJE', 'PLACAS FORA DE ROTA', 'MENU PRINCIPAL'], 'IMPRESSÃO DE PLACAS DO PICKING')
+                op4 = menu(['PLACAS DE HOJE', 'PLACAS FORA DE ROTA', 'MENU PRINCIPAL'],
+                           'IMPRESSÃO DE PLACAS DO PICKING')
                 if op4 == 1:
                     placas = geraPlacasPicking(arq_1, hoje)
                     imprime(placas, 1)
@@ -151,11 +152,12 @@ def main():
                 if op4 == 3:
                     break
 
-        elif op == 5: # ENCERRA
+        elif op == 5:  # ENCERRA
             break
         else:
             print(f'{cor(3)}OPÇÃO INVÁLIDA... TENTE NOVAMENTE!{cor(0)}')
     encerra()
+
 
 if __name__ == '__main__':
     main()

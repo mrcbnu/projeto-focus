@@ -90,8 +90,9 @@ def oc_periodo(arquivo, ini, fim):
             else:
                 print(f'{cor(3)}Opçãp inválida{cor(0)}')
         if resp == 'S':
-            imprime(local)
-
+            copias = leiaInt('Copias: ')
+            imprime(local, copias)
+            os.remove(local)
 
 def mm(x):
     return x / 0.352777
@@ -276,7 +277,7 @@ def geraListagemRoteiro(arquivo, ini, fim):
             pdf.setLineWidth(0.5)
             pdf.line(10, 20, 580,20)
             pdf.setFont('Helvetica', 8)
-            pdf.drawString(10, 10, 'Gerado por Focus v1.0')
+            pdf.drawString(10, 10, 'Gerado por AgroLog v1.01 beta')
 
     pdf.save()
     while True:
@@ -286,8 +287,8 @@ def geraListagemRoteiro(arquivo, ini, fim):
         else:
             print(f'{cor(3)}Opçãp inválida{cor(0)}')
     if resp == 'S':
-        copia = leiaInt('Quantas copias?: ')
-        imprime(relatorio,copia)
+        copia = leiaInt('Cópias: ')
+        imprime(relatorio, copia)
     geraPlacas(arquivo, ini, fim)
 
 
@@ -372,7 +373,7 @@ def geraPlacas(arquivo, ini, fim):
         else:
             print(f'{cor(3)}Opçãp inválida{cor(0)}')
     if resp == 'S':
-        copia = leiaInt('Quantas copias?: ')
+        copia = leiaInt('Cópias: ')
         imprime(relatorio, copia)
 
 
