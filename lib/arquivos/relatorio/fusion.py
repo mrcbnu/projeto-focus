@@ -14,7 +14,7 @@ def controle(dados):
     escala_df = dados
     # excluir linhas das transportadoras expresso e reunidas
     escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)
-
+    escala_df = escala_df.reset_index()  # reseta o indice do dataframe após excluir transportadora
     # gerar DataFrame
     escala = escala_df[['Carga ERP', 'Destino', 'Veículo', 'Motorista', 'Ajudante 1', 'Ajudante 2', 'Data']]
 
@@ -95,7 +95,7 @@ def vistoria(dados):
     escala_df = dados
     # excluir linhas das transportadoras expresso e reunidas
     escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)
-
+    escala_df = escala_df.reset_index()  # reseta o indice do dataframe após excluir transportadora
     # gerar DataFrame
     escala = escala_df[['Carga ERP', 'Destino', 'Veículo', 'Motorista', 'Data']]
 
@@ -198,7 +198,7 @@ def vistoria(dados):
             vis.rect(mm(5), mm(lin), mm(200), mm(6), fill=0)
             vis.line(mm(145), mm(lin), mm(145), mm(lin + 6))
             vis.drawString(mm(6), mm(lin + 1), topicoQual[i])
-            vis.drawString(mm(147), mm(lin + 2), 'x')
+            vis.drawString(mm(147), mm(lin + 2), '')
             vis.line(mm(151), mm(lin), mm(151), mm(lin + 6))
             vis.line(mm(157), mm(lin), mm(157), mm(lin + 6))
             vis.line(mm(163), mm(lin), mm(163), mm(lin + 6))
@@ -249,7 +249,7 @@ def escalacao(dados):
     escala_df = dados
     # excluir linhas das transportadoras expresso e reunidas
     escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)
-
+    escala_df = escala_df.reset_index()  # reseta o indice do dataframe após excluir transportadora
     # gerar DataFrame
     escala = escala_df[['Carga ERP', 'Destino', 'Veículo', 'Motorista', 'Ajudante 1', 'Ajudante 2']]
 
