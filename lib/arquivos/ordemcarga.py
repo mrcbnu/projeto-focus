@@ -212,12 +212,12 @@ def geraOC(arq):
     '''
 
     matriz = (
-            'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI','TIJUCAS PALHOÇA', 'TUBARÃO', 'FPOLIS CENTRO',
-            'SÃO JOSÉ', 'BNU SUL/LES', 'REUNIDAS', 'EXPRESSO', 'ARARANGUÁ', 'SÃO JOSÉ',
-            'FPOLIS CENTRO','JLLE CEN/NOR','BNU NOR/OES', 'REUNIDAS', 'EXPRESSO', 'JARAGUÁ DO SUL', 'SÃO JOSÉ',
-            'FPOLIS NORTE', 'PORTO BELO', 'BNU SUL/LES', 'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI',
-            'FPOLIS CENTRO', 'FPOLIS SUL', 'RIO DO SUL', 'LITORAL NORTE', 'JLLE CEN/SUL', 'REUNIDAS', 'EXPRESSO',
-            'MAFRA', 'BRUSQUE GASPAR', 'BNU NOR/OES', 'CHAPECÓ', 'LAGES'
+            'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI', 'TIJUCAS PALHOÇA', 'TUBARÃO', 'FPOLIS CENTRO',
+            'SÃO JOSÉ', 'BNU SUL/LES',
+            'REUNIDAS', 'EXPRESSO', 'ARARANGUÁ','SÃO JOSÉ','FPOLIS CENTRO','JLLE CEN/NOR','BNU NOR/OES',
+            'REUNIDAS', 'EXPRESSO', 'JARAGUÁ DO SUL', 'SÃO JOSÉ', 'FPOLIS NORTE', 'PORTO BELO', 'BNU SUL/LES',
+            'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI','FPOLIS CENTRO', 'FPOLIS SUL', 'RIO DO SUL', 'LITORAL NORTE', 'JLLE CEN/SUL',
+            'REUNIDAS', 'EXPRESSO', 'MAFRA', 'BRUSQUE GASPAR', 'BNU NOR/OES', 'CHAPECÓ', 'LAGES'
             )
     # PEGAR O ULTIMO REGISTRO DO ARQUIVO DE DADOS E USAR COMO PARAMETRO INICIAL
     with open(arq, 'r') as origem:
@@ -241,7 +241,7 @@ def geraOC(arq):
                 print(f'{cor (3)}Opçãp inválida{cor (0)}')
         linha('-', 80, 1)
         cont = 0
-        oc = 101
+        oc = 101 # numeração da OC inicia a partir desse desse valor
         for item, valor in enumerate(matriz):
 
             cont += 1
@@ -265,8 +265,10 @@ def geraOC(arq):
 
             elif ('BALNEÁRIO' in valor) or ('ITAJAI' in valor) or ('JARAGUÁ' in valor):
                 transp = '5834'
+
             else:
                 transp = '493'
+
             if valor != 'LAGES' or (valor == 'LAGES' and resp == 'S'):
                 try:
                     origem = open(arq, 'at')

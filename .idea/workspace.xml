@@ -34,14 +34,19 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="atualização reset indice dataframe">
+    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="IMPLEMENTAÇÃO TELA GUI DE LOGIN">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/comprovante.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorios.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +58,7 @@
       <list>
         <option value="Setup Script" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -88,7 +94,9 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;TODO_SCOPE&quot;: &quot;All Places&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
@@ -395,7 +403,14 @@
       <option name="project" value="LOCAL" />
       <updated>1705931682120</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="IMPLEMENTAÇÃO TELA GUI DE LOGIN">
+      <created>1705961502040</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1705961502040</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -435,6 +450,7 @@
     <MESSAGE value="atualização arquivos dados 21082023" />
     <MESSAGE value="atualização arquivos dados 01-09-2023" />
     <MESSAGE value="atualização reset indice dataframe" />
-    <option name="LAST_COMMIT_MESSAGE" value="atualização reset indice dataframe" />
+    <MESSAGE value="IMPLEMENTAÇÃO TELA GUI DE LOGIN" />
+    <option name="LAST_COMMIT_MESSAGE" value="IMPLEMENTAÇÃO TELA GUI DE LOGIN" />
   </component>
 </project>

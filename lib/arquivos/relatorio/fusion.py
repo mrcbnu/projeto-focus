@@ -145,7 +145,8 @@ def vistoria(dados):
         vis.rect(mm(155), mm(228), mm(50), mm(7))
         vis.drawString(mm(125), mm(230), 'Motorista')
 
-        # segundo bloco - avaliação de segurança e meio ambiente
+        ### segundo bloco - avaliação de segurança e meio ambiente - desativado temporariamente
+        '''
         vis.setFillColorRGB(0.7, 0.7, 0.7)
         vis.rect(mm(5), mm(218), mm(200), mm(6), fill=1)
         vis.setFillColorRGB(0, 0, 0)
@@ -172,7 +173,7 @@ def vistoria(dados):
             vis.line(mm(157), mm(lin), mm(157), mm(lin + 6))
             vis.line(mm(163), mm(lin), mm(163), mm(lin + 6))
             lin -= 6
-
+        '''
         # terceiro bloco - Avaliação qualiodade e Bug Out
 
         vis.setFillColorRGB(0.7, 0.7, 0.7)
