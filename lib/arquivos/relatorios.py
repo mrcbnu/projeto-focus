@@ -277,7 +277,7 @@ def geraListagemRoteiro(arquivo, ini, fim):
             pdf.setLineWidth(0.5)
             pdf.line(10, 20, 580,20)
             pdf.setFont('Helvetica', 8)
-            pdf.drawString(10, 10, 'Gerado por AgroLog v1.01 beta')
+            pdf.drawString(10, 10, 'Gerado por FOCUS v1.02062023')
 
     pdf.save()
     while True:
@@ -620,11 +620,11 @@ def geraPlacasPicking(arquivo,data):
     except:
         print(f'{cor(3)} Erro ao ler o arquivo {arquivo}!{cor(0)}')
 
-    novaPag = True
+    novaPag = True # flag de quebra de pagina, se True inicia nova pagina, se False continua na menama pagina
     for reg in arq:
             dado = reg.split(';')
             dado[2] = dado[2].replace('\n', '')
-            if dado[2] == data:
+            if dado[2] == data: # fazer substituição/abreviação de alguns nomes para economizar espaço na folha
                 dado[1] = dado[1].replace('FPOLIS', 'FP')
                 dado[1] = dado[1].replace('TIJUCAS PALHOÇA', 'TIJUCAS')
                 dado[1] = dado[1].replace('JARAGUÁ DO SUL', 'JARAGUA')

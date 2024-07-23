@@ -21,6 +21,7 @@ def main():
     se não encontrado será criado um novo 
     '''
     cabecalho('-', 'verificando arquivos...')
+    # arq - lista de arquivo e/ou modulos para o funcionamento do sistema
     arq = ['lib/arquivos/database/oc_semana1.txt',
            'lib/arquivos/ordemcarga.py',
            'lib/arquivos/relatorio/comprovante.py',
