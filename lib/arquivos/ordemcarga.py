@@ -1,5 +1,5 @@
 from lib.arquivos import relatorios
-#from lib.arquivos.relatorios import *
+from lib.arquivos.relatorios import *
 from lib.interface.valida import *
 from lib.interface.layout import *
 from time import sleep

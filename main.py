@@ -29,11 +29,11 @@ def main():
            'lib/arquivos/relatorios.py',
            'lib/interface/valida.py',
            'lib/interface/layout.py',
-           r'C:\Users\faturamento-01\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
+           r'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
            ]
     arq_1 = 'lib/arquivos/database/oc_semana1.txt'
     origem = 'lib/arquivos/database/origem.txt'
-    temp = r'C:\Users\faturamento-01\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
+    temp = r'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
 
     for chave, valor in enumerate(arq):
         if arqExiste(valor):

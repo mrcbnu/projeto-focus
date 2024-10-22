@@ -4,12 +4,12 @@ from time import sleep, strptime
 from lib.arquivos.ordemcarga import *
 from lib.arquivos.relatorios import pdftojpg
 
+
 def mm(x):
     return x / 0.352777
 
 
 def controle(dados):
-
     print('GERANDO RELATÓRIO CONTROLE DE QUILOMETRAGEM')
     escala_df = dados
     # excluir linhas das transportadoras expresso e reunidas
@@ -260,7 +260,7 @@ def escalacao(dados):
     # gerar cabecalho da escalação
     alt = 35 + (linha * 20)
     div = canvas.Canvas(arquivo, pagesize=(mm(260), mm(alt)))
-    div.setFillColorRGB(0, 0.5, 0.8)  # cor RGB azul escuro
+    div.setFillColorRGB(0.1, 0.1, 0.9)  # cor RGB azul escuro
     div.rect(mm(5), mm(alt - 30), mm(250), mm(15), fill=1)  # retangulo fundo azul escuro
     div.setLineWidth(1.5)  # espessura da linha
     div.setFont('Helvetica-Bold', 25)  # fonte e tamanho
@@ -268,11 +268,11 @@ def escalacao(dados):
     div.drawCentredString(mm(130), mm(alt - 9), 'PROGRAMAÇÃO DE VIAGEM')
     div.line(mm(5), mm(alt - 15), mm(255), mm(alt - 15))  # primeira linha
     div.line(mm(5), mm(alt - 30), mm(5), mm(alt - 15))  # primeira coluna
-    div.line(mm(90), mm(alt - 30), mm(90), mm(alt - 15))  # segunda coluna
-    div.line(mm(140), mm(alt - 30), mm(140), mm(alt - 15))  # terceira coluna
+    # div.line(mm(90), mm(alt - 30), mm(90), mm(alt - 15))  # segunda coluna
+    # div.line(mm(140), mm(alt - 30), mm(140), mm(alt - 15))  # terceira coluna
     div.line(mm(255), mm(alt - 30), mm(255), mm(alt - 15))  # quarta coluna
     div.line(mm(5), mm(alt - 30), mm(255), mm(alt - 30))  # segunda linha
-    div.setFillColorRGB(255, 255, 255)  # cor que o proximo texto vai assumir - branco
+    div.setFillColorRGB(1, 1, 1)  # cor que o proximo texto vai assumir - branco
     div.drawCentredString(mm(45), mm(alt - 25), 'ROTEIRO')
     div.drawCentredString(mm(115), mm(alt - 25), 'CARRO')
     div.drawCentredString(mm(197), mm(alt - 25), 'COLABORADORES')
@@ -285,17 +285,19 @@ def escalacao(dados):
         dado = escala.loc[cont]
         ajudante1 = str(dado['Ajudante 1'])
         ajudante2 = str(dado['Ajudante 2'])
+        placa = f"lib/arquivos/database/{dado['Veículo']}.png"
         div.setFont('Helvetica-Bold', 20)
-        div.setFillColorRGB(0, 1, 1)
+        div.setFillColorRGB(0, 1, 1)  # verde
         div.rect(mm(5), mm(linInf), mm(250), mm(20), fill=1)
         div.setFillColorRGB(0, 0, 0)
         div.line(mm(5), mm(linSup), mm(5), mm(linInf))  # coluna
-        div.line(mm(90), mm(linSup), mm(90), mm(linInf))  # coluna
-        div.line(mm(140), mm(linSup), mm(140), mm(linInf))  # coluna
+        # div.line(mm(90), mm(linSup), mm(90), mm(linInf))  # coluna
+        # div.line(mm(140), mm(linSup), mm(140), mm(linInf))  # coluna
         div.line(mm(255), mm(linSup), mm(255), mm(linInf))  # coluna
         div.line(mm(5), mm(linInf), mm(255), mm(linInf))  # linha inferior
         div.drawString(mm(7), mm(tex), dado['Destino'])
-        div.drawCentredString(mm(115), mm(tex), dado['Veículo'])
+        # div.drawCentredString(mm(115), mm(tex), dado['Veículo'])
+        div.drawImage(placa, mm(91), mm(linInf + 2), 135, 44)
         div.setFont('Helvetica-Bold', 18)
         if ajudante2 != 'nan':
             div.drawString(mm(143), mm(tex + 6), dado['Motorista'])
