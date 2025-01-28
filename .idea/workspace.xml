@@ -34,56 +34,8 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="atualização arquivos dados 01-09-2023">
-      <change beforePath="$PROJECT_DIR$/.idea/agr-exped.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/agr-exped.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/AgroLog.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/ICONE-FOCUS.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/logo_AgroExped.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/origem.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 01-09-2023 a 10-09-2023.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 04-09-2023 a 08-09-2023.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 05-06-2023 a 09-06-2023.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 17-07-2023 a 21-07-2023.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 21-08-2023 a 25-08-2023.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 29-05-2023 a 02-06-2023.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 31-07-2023 a 04-08-2023.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 03-07-2023 a 07-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 04-09-2023 a 08-09-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 07-08-2023 a 11-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 10-07-2023 a 14-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 12-06-2023 a 16-06-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 14-08-2023 a 18-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 17-07-2023 a 21-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 19-06-2023 a 23-06-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 21-08-2023 a 25-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 24-07-2023 a 28-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 26-06-2023 a 30-06-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 31-07-2023 a 04-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/prog 10-07-23.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 03-07-2023 a 07-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 04-09-2023 a 08-09-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 07-08-2023 a 11-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 10-07-2023 a 14-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 12-06-2023 a 16-06-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 14-08-2023 a 18-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 17-07-2023 a 21-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 19-06-2023 a 23-06-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 21-08-2023 a 25-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 24-07-2023 a 28-07-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 26-06-2023 a 30-06-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 31-07-2023 a 04-08-2023.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorios.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="atualização fusion - novas cores escalação e imagens das palcas dos carros">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/python-package-conda.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -430,7 +382,15 @@
       <option name="project" value="LOCAL" />
       <updated>1693588050149</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="atualização fusion - novas cores escalação e imagens das palcas dos carros">
+      <option name="closed" value="true" />
+      <created>1729569532297</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1729569532313</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -469,6 +429,17 @@
     <MESSAGE value="ajustes agrosul 09062023" />
     <MESSAGE value="atualização arquivos dados 21082023" />
     <MESSAGE value="atualização arquivos dados 01-09-2023" />
-    <option name="LAST_COMMIT_MESSAGE" value="atualização arquivos dados 01-09-2023" />
+    <MESSAGE value="atualização fusion - novas cores escalação e imagens das palcas dos carros" />
+    <option name="LAST_COMMIT_MESSAGE" value="atualização fusion - novas cores escalação e imagens das palcas dos carros" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lib/interface/valida.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

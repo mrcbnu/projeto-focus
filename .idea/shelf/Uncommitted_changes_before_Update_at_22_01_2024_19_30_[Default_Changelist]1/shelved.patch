@@ -1,0 +1,815 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from time import sleep\r\nfrom lib.arquivos.relatorios import *\r\nfrom lib.arquivos.relatorio.comprovante import *\r\nfrom lib.arquivos.ordemcarga import *\r\nfrom lib.interface.layout import *\r\nfrom lib.interface.valida import *\r\nfrom lib.interface.vinheta import *\r\nfrom lib.arquivos.relatorio.fusion import *\r\nimport pandas as pd\r\nimport os\r\nfrom PIL import Image\r\n\r\n\r\ndef main():\r\n    os.system('cls')\r\n    abertura()\r\n    hoje = date.today().strftime('%d/%m/%Y')\r\n    hoje1 = date.today().strftime('%d-%m-%y')\r\n    '''\r\n    Localiza os arquivos necessarios\r\n    se não encontrado será criado um novo \r\n    '''\r\n    cabecalho('-', 'verificando arquivos...')\r\n    arq = ['lib/arquivos/database/oc_semana1.txt',\r\n           'lib/arquivos/ordemcarga.py',\r\n           'lib/arquivos/relatorio/comprovante.py',\r\n           'lib/arquivos/relatorio/fusion.py',\r\n           'lib/arquivos/relatorios.py',\r\n           'lib/interface/valida.py',\r\n           'lib/interface/layout.py',\r\n           r'C:\\Users\\faturamento-01\\Downloads\\Relatório de Motorista e Ajudantes Escalados.csv'\r\n           ]\r\n    arq_1 = 'lib/arquivos/database/oc_semana1.txt'\r\n    origem = 'lib/arquivos/database/origem.txt'\r\n    temp = r'C:\\Users\\faturamento-01\\Downloads\\Relatório de Motorista e Ajudantes Escalados.csv'\r\n\r\n    for chave, valor in enumerate(arq):\r\n        if arqExiste(valor):\r\n            print(f'Arquivo {cor(13)}{valor}{cor(0)} encontrado com sucesso')\r\n            sleep(1)\r\n        else:\r\n            print(f'Arquivo {cor(3)}{valor} {cor(0)} não encontrado...')\r\n            sleep(1)\r\n\r\n    sleep(3)\r\n\r\n    #######    MENU PRINCIPAL    #########\r\n    while True:\r\n        os.system('cls')\r\n        op = menu(['ORDENS DE CARGA', 'PROGRAMAÇÃO', 'COMPROVANTE', 'PLACAS PICKING', 'SAIR'], 'MENU PRINCIPAL')\r\n        if op == 1:  # ORDENS DE CARGA\r\n            while True:\r\n                os.system('cls')\r\n                op1 = menu(['OC HOJE', 'OC PERIODO', 'INCLUIR', 'IMPORTAR', 'GERAR', 'VOLTAR'],\r\n                           'ORDENS DE CARGA')\r\n                if op1 == 1:\r\n                    oc_hoje(arq_1, hoje)\r\n                    input('pressione ENTER para continuar...')\r\n                elif op1 == 2:\r\n                    ini = leiaData('Data inicial dd/mm/aaaa: ')\r\n                    fim = leiaData('Data final dd/mm/aaaa: ')\r\n                    oc_periodo(arq_1, ini, fim)\r\n                    input('pressione ENTER para continuar...')\r\n                elif op1 == 3:\r\n                    incluiOC(arq_1)\r\n                    input('pressione ENTER para continuar...')\r\n                elif op1 == 4:\r\n                    if arqExiste(origem):\r\n                        importaOC(origem, arq_1)\r\n                        os.remove(origem)\r\n                        input('pressione ENTER para continuar...')\r\n                    else:\r\n                        print(f'Arquivo {origem} não encontrado!')\r\n                        input('pressione ENTER para continuar...')\r\n                elif op1 == 5:\r\n                    geraOC(arq_1)\r\n                    input('pressione ENTER para continuar...')\r\n                else:\r\n                    break\r\n        elif op == 2:  # PROGRAMAÇÃO\r\n            while True:\r\n                os.system('cls')\r\n                opc = menu(['HOJE', 'FORA DA ROTA', 'FUSION', 'MENU PRINCIPAL'], 'PROGRAMAÇÃO')\r\n                arq_dt = f'lib/arquivos/relatorio/programacao/prog {hoje1}.txt'\r\n                arq_img = f'lib/arquivos/relatorio/programacao/prog {hoje1}.jpg'\r\n                if opc == 1:\r\n                    progDia(arq_dt, arq_1, hoje)\r\n                    if not arqExiste(arq_img):\r\n                        divulga(arq_dt, hoje1)\r\n                    input('pressione ENTER para continuar...')\r\n\r\n                elif opc == 2:\r\n                    dtfora = leiaData('Digite a data do roteiro que deseja programar [dd/mm/aaa]: ')\r\n                    dtfora1 = dtfora.strftime('%d-%m-%y')\r\n                    dtfora = dtfora.strftime('%d/%m/%Y')\r\n                    print(dtfora)\r\n                    arq_dt = f'lib/arquivos/relatorio/programacao/prog {dtfora1}.txt'\r\n                    arq_img = f'lib/arquivos/relatorio/programacao/prog {dtfora1}.jpg'\r\n                    progDia(arq_dt, arq_1, dtfora)\r\n                    if not arqExiste(arq_img):\r\n                        divulga(arq_dt, dtfora1)\r\n                    input('pressione ENTER para continuar...')\r\n\r\n                elif opc == 3:\r\n                    try:\r\n                        dados = pd.read_csv(temp)\r\n\r\n                    except:\r\n                        print(\r\n                            'ERRO: Arquivo de dados não encontrado!, favor fazer download do arquivo de dados no FUSION DMS')\r\n\r\n                    else:\r\n                        print('DataFrame criado com sucesso')\r\n                        cabecalho('-', 'GERANDO CONTROLE DE QUILOMETRAGEM')\r\n                        cont = controle(dados)\r\n                        imprime(cont, 1)\r\n\r\n                        cabecalho('-', 'GERANDO VISTORIA')\r\n                        vist = vistoria(dados)\r\n                        imprime(vist, 1)\r\n\r\n                        cabecalho('-', 'GERANDO ESCALAÇÃO')\r\n                        escala = escalacao(dados)\r\n                        print(escala)\r\n                        imagem = Image.open(escala)\r\n                        imagem.show()\r\n\r\n                    input('pressione ENTER para continuar...')\r\n                    if arqExiste(temp):\r\n                        os.remove(temp)\r\n                elif opc == 4:\r\n                    break\r\n                else:\r\n                    print(f'{cor(3)}OPÇÃO INVÁLIDA... TENTE NOVAMENTE!{cor(0)}')\r\n\r\n        elif op == 3:  # COMPROVANTE\r\n            comprovante()\r\n            input('pressione ENTER para continuar....')\r\n\r\n        elif op == 4:  # PLACAS ROTEIRO\r\n            while True:\r\n                op4 = menu(['PLACAS DE HOJE', 'PLACAS FORA DE ROTA', 'MENU PRINCIPAL'],\r\n                           'IMPRESSÃO DE PLACAS DO PICKING')\r\n                if op4 == 1:\r\n                    placas = geraPlacasPicking(arq_1, hoje)\r\n                    imprime(placas, 1)\r\n                if op4 == 2:\r\n                    dtfora = leiaData('Digite a data do roteiro que deseja imprimir [dd/mm/aaa]: ')\r\n                    dtfora = dtfora.strftime('%d/%m/%Y')\r\n                    placas = geraPlacasPicking(arq_1, dtfora)\r\n                    imprime(placas, 1)\r\n                if op4 == 3:\r\n                    break\r\n\r\n        elif op == 5:  # ENCERRA\r\n            break\r\n        else:\r\n            print(f'{cor(3)}OPÇÃO INVÁLIDA... TENTE NOVAMENTE!{cor(0)}')\r\n    encerra()\r\n\r\n\r\nif __name__ == '__main__':\r\n    main()\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/main.py	(date 1693588753183)
+@@ -28,11 +28,11 @@
+            'lib/arquivos/relatorios.py',
+            'lib/interface/valida.py',
+            'lib/interface/layout.py',
+-           r'C:\Users\faturamento-01\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
++           r'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
+            ]
+     arq_1 = 'lib/arquivos/database/oc_semana1.txt'
+     origem = 'lib/arquivos/database/origem.txt'
+-    temp = r'C:\Users\faturamento-01\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
++    temp = r'E:\Meus Documentos\Downloads\Relatório de Motorista e Ajudantes Escalados.csv'
+ 
+     for chave, valor in enumerate(arq):
+         if arqExiste(valor):
+Index: lib/arquivos/relatorios.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from lib.arquivos.ordemcarga import *\r\nfrom lib.interface.layout import *\r\nfrom lib.interface.cores import *\r\nfrom time import sleep, strptime\r\nfrom datetime import *\r\nfrom lib.interface.valida import diaSemana\r\nfrom reportlab.pdfgen import canvas\r\nfrom reportlab.lib.pagesizes import A4, landscape\r\nimport subprocess\r\nimport fitz\r\nimport os\r\n\r\n\r\ndef oc_hoje(arquivo, data='hoje'):\r\n    '''\r\n    =>Exibe os roteiros de uma data especefica.\r\n    :param arquivo: arquivo onde estão listados as OCs e seus respectivos Roteiros\r\n    :param data: data especificada pelo usuario, se não informado assume a data corrente.\r\n    '''\r\n    try:\r\n        a = open(arquivo, 'r')\r\n    except:\r\n        print(f'{cor(3)}Erro ao ler arquivo {arquivo}!{cor(0)}')\r\n    else:\r\n        cabecalho('-', 'ROTEIRO DE HOJE')\r\n        print(data)\r\n        print('+','-' * 9,'+', '-' * 44, '+')\r\n        print('| {}|{} |'.format('OC'.center(10), 'ROTEIRO'.center(45)))\r\n        print('+','-' * 9,'+', '-' * 44, '+')\r\n        for v in a:\r\n            dado = v.split(';')\r\n            dado[2] = dado[2].replace('\\n', '')\r\n            if dado[2] == data:\r\n                print(f'| {dado[0]:^10}| {dado[1]:<45}|')\r\n        print('+','-' * 9,'+', '-' * 44, '+')\r\n    finally:\r\n        a.close()\r\n\r\n\r\ndef oc_periodo(arquivo, ini, fim):\r\n    '''\r\n    => Exibe os roteiros do periodo informado\r\n    :param arquivo: arquivo onde estão listados as OCs e seus respectivos Roteiros.\r\n    :param ini: data inicial\r\n    :param fim: data final\r\n    '''\r\n\r\n    d_ini = datetime.strftime(ini, '%d-%m-%Y')\r\n    d_fim = datetime.strftime(fim, '%d-%m-%Y')\r\n    linha1 = '{}{}{}{}{}{}{}'.format('+', ('-' * 11),'+', ('-' * 31), '+', ('-' * 14), '+')\r\n    periodo = f\"{datetime.strftime(ini, '%d/%m/%Y')} a {datetime.strftime(fim, '%d/%m/%Y')}\"\r\n\r\n    try:\r\n        a = open(arquivo, 'r')\r\n    except:\r\n        print(f'{cor(3)} Erro ao ler o arquivo {arquivo}!{cor(0)}')\r\n    else:\r\n        local = f'lib/arquivos/relatorio/programacao/periodo {d_ini} a {d_fim}.txt'\r\n        b = open(local, 'at')\r\n\r\n        cabecalho('-', 'ROTEIRO DO PERIODO')\r\n        print(periodo)\r\n        print(linha1)\r\n        print('| {}|{} |{}|'.format('OC'.center(10), 'ROTEIRO'.center(30), 'DATA'.center(14)))\r\n\r\n        b.write(f'{periodo}\\n')\r\n        b.write(f'{linha1}\\n')\r\n        b.write('| {}|{} |{}|\\n'.format('OC'.center(10), 'ROTEIRO'.center(30), 'DATA'.center(14)))\r\n\r\n        for v in a:\r\n            dado = v.split(';')\r\n            dado[2] = dado[2].replace('\\n', '')\r\n            dado[2] = datetime.strptime(dado[2], '%d/%m/%Y')\r\n            if ini <= dado[2] <= fim:\r\n                dado[2] = datetime.strftime(dado[2], '%d/%m/%Y')\r\n                if dado[1] == 'REUNIDAS':\r\n                    print(linha1)\r\n                    b.write(f'{linha1}\\n')\r\n                resultado =(f'| {dado[0]:^10}| {dado[1]:<30}| {dado[2]:^13}|')\r\n                print(resultado)\r\n                b.write(f'{resultado}\\n')\r\n        print(linha1)\r\n        b.write(linha1)\r\n        a.close()\r\n        b.close()\r\n        while True:\r\n            resp = str(input('DESEJA IMPRIMIR O RESUMO DOS ROTEIROS [S/N]: ')).upper()\r\n            if resp == 'S' or resp == 'N':\r\n                break\r\n            else:\r\n                print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n        if resp == 'S':\r\n            copias = leiaInt('Copias: ')\r\n            imprime(local, copias)\r\n            os.remove(local)\r\n\r\ndef mm(x):\r\n    return x / 0.352777\r\n\r\n\r\ndef divulga(arq_data, data):\r\n\r\n    try:\r\n        arq = open(arq_data, 'r')\r\n        os.system(\"taskkill /f /im Acrobat.exe\")\r\n    except:\r\n        print(f'{cor(3)}Ops! erro ao acessar o arquivo...{cor(0)}')\r\n    else:\r\n        print(f'{cor(5)}Analizando os dados.', end='')\r\n        sleep(0.25)\r\n        print(' .', end=''); sleep(0.25); print(' .', end=''); sleep(0.25)\r\n        print(' .', end=''); sleep(0.25); print(f' tudo certo! ', end=''); sleep(0.25)\r\n        print(f'{cor(1)}Gerando relatório {cor(0)}\\n')\r\n        sleep(0.50)\r\n\r\n        arquivo = f'lib/arquivos/relatorio/programacao/prog {data}.pdf'\r\n\r\n        cont = 0\r\n        for p in arq: #conta quantas rotas contem na programação\r\n            cont += 1\r\n\r\n        alt = 35 + (cont * 20)\r\n        div = canvas.Canvas(arquivo, pagesize=(mm(260), mm(alt)))\r\n        div.setFillColorRGB(0, 0.5, 0.80)  # cor RGB azul escuro\r\n        div.rect(mm(5), mm(alt - 30), mm(250), mm(15), fill=1)  # retangulo fundo azul escuro\r\n        div.setLineWidth(1.5)  # espessura da linha\r\n        div.setFont('Helvetica-Bold', 25)  # fonte e tamanho\r\n        div.setFillColorRGB(0, 0, 0)\r\n        div.drawCentredString(mm(130), mm(alt - 9), 'PROGRAMAÇÃO DE VIAGEM')\r\n        div.line(mm(5), mm(alt - 15), mm(255), mm(alt - 15))  # primeira linha\r\n        div.line(mm(5), mm(alt - 30), mm(5), mm(alt - 15))  # primeira coluna\r\n        div.line(mm(90), mm(alt - 30), mm(90), mm(alt - 15))  # segunda coluna\r\n        div.line(mm(140), mm(alt - 30), mm(140), mm(alt - 15))  # terceira coluna\r\n        div.line(mm(255), mm(alt - 30), mm(255), mm(alt - 15))  # quarta coluna\r\n        div.line(mm(5), mm(alt - 30), mm(255), mm(alt - 30))  # segunda linha\r\n        div.setFillColorRGB(255, 255, 255)  # cor que o proximo texto vai assumir - branco\r\n        div.drawCentredString(mm(45), mm(alt - 27), 'ROTEIRO')\r\n        div.drawCentredString(mm(115), mm(alt - 27), 'CARRO')\r\n        div.drawCentredString(mm(197), mm(alt - 27), 'COLABORADORES')\r\n\r\n        linSup = alt - 30\r\n        linInf = alt - 50\r\n        tex = alt - 45\r\n\r\n        arq.close()\r\n        try:\r\n            arq = open(arq_data, 'r')\r\n            os.system(\"taskkill /f /im Acrobat.exe\")\r\n        except:\r\n            print(f'{cor(3)}Ops! erro ao acessar o arquivo...{cor(0)}')\r\n        else:\r\n            for v in arq:\r\n                dados = v.split(';')\r\n                dados[6] = dados[6].replace('\\n', '')\r\n                div.setFillColorRGB(0, 1, 1)\r\n                div.rect(mm(5), mm(linInf), mm(250), mm(20), fill=1)\r\n                div.setFillColorRGB(0, 0, 0)\r\n                div.line(mm(5),   mm(linSup), mm(5),   mm(linInf))  # coluna\r\n                div.line(mm(90),  mm(linSup), mm(90),  mm(linInf))  # coluna\r\n                div.line(mm(140), mm(linSup), mm(140), mm(linInf))  # coluna\r\n                div.line(mm(255), mm(linSup), mm(255), mm(linInf))  # coluna\r\n                div.line(mm(5),   mm(linInf), mm(255), mm(linInf))  # linha inferior\r\n                div.drawString(mm(7), mm(tex), dados[1])\r\n                div.drawCentredString(mm(115), mm(tex), dados[3])\r\n                div.drawString(mm(143), mm(tex), dados[5])\r\n                div.drawString(mm(207), mm(tex), dados[6])\r\n                print(f'OC {dados[0]} ..... ok!')\r\n                sleep(0.5)\r\n                linSup -= 20\r\n                linInf -= 20\r\n                tex -= 20\r\n\r\n            div.save()\r\n\r\n        diretorio = os.getcwd().replace(\"\\\\\", \"/\") + '/'\r\n        arq_jpg = f'lib/arquivos/relatorio/programacao/escalacao.jpg'\r\n\r\n        # converter em imagem\r\n        while not arqExiste(arquivo):\r\n            sleep(0.1)\r\n            print(\".\" , end='')\r\n        poppler_path = r'C:\\agr-exped\\lib\\arquivos\\relatorio\\poppler-0.68.0\\bin\\pdftoppm.exe'\r\n\r\n        subprocess.Popen('\"%s\" -jpeg \"%s\" prog' % (poppler_path, arquivo))\r\n        jpg = diretorio + 'prog-1.jpg'\r\n        print('\\nGERANDO IMAGEM PARA DIVULGAÇÃO  ', end='')\r\n        while not arqExiste(jpg):\r\n            sleep(0.1)\r\n            print('. ', end='')\r\n\r\n        try:\r\n            #shutil.move(jpg, arq_jpg)\r\n            os.rename(jpg, arq_jpg)\r\n            print('\\nRELATÓRIO CONCLUIDO')\r\n        except PermissionError as e:\r\n            print(e)\r\n            pass\r\n\r\n\r\ndef geraListagemRoteiro(arquivo, ini, fim):\r\n    dat_ini = datetime.strftime(ini, '%d-%m-%Y')\r\n    dat_fim = datetime.strftime(fim, '%d-%m-%Y')\r\n    relatorio = f'lib/arquivos/relatorio/programacao/roteiro {dat_ini} a {dat_fim}.pdf'\r\n    pdf = canvas.Canvas(relatorio, pagesize=A4)\r\n    pdf.setLineWidth(1.5)\r\n    diaAux = ''\r\n    pag = 1\r\n    lin = 750\r\n    tex = 715\r\n    col = 700\r\n    try:\r\n        arq = open(arquivo, 'r')\r\n    except:\r\n        print(f'{cor(3)} Erro ao ler o arquivo {arquivo}!{cor(0)}')\r\n\r\n    for reg in arq:\r\n        dado = reg.split(';')\r\n        dado[2] = dado[2].replace('\\n', '')\r\n        dado[2] = datetime.strptime(dado[2], '%d/%m/%Y')\r\n        if ini <= dado[2] <= fim:\r\n            data1 = dado[2] = datetime.strftime(dado[2], '%d/%m/%Y')\r\n            data = datetime.strptime(dado[2], '%d/%m/%Y')\r\n            diaSem = diaSemana(data)\r\n            pdf.setLineWidth(1.5)\r\n\r\n            if pag == 1:\r\n                #  TABELA CABEÇALHO PRIMEIRA PAGINA\r\n                pdf.setFont('Helvetica-Bold', 20)\r\n                pdf.line(10, 800, 580, 800)\r\n                pdf.line(10, 800, 10, 770)\r\n                pdf.drawString(20, 777, 'DATA')\r\n                pdf.line(126, 800, 126, 770)\r\n                pdf.drawString(136, 777, data1)\r\n                pdf.line(450, 800, 450, 770)\r\n                pdf.drawString(460, 777, diaSem)\r\n                pdf.line(580, 800, 580, 770)\r\n                pdf.line(10, 770, 580, 770)\r\n                diaAux = diaSem\r\n                pag += 1\r\n\r\n            if diaSem != diaAux:\r\n                pdf.showPage()  # QUEBRA PAGINA\r\n                lin = 750\r\n                tex = 715\r\n                col = 700\r\n\r\n                # TABELA CABEÇALHO DAS OUTRAS PAGIANS\r\n                pdf.setLineWidth(1.5)\r\n                pdf.setFont('Helvetica-Bold', 20)\r\n                pdf.line(10, 800, 580, 800)\r\n                pdf.line(10, 800, 10, 770)\r\n                pdf.drawString(20, 777, 'DATA')\r\n                pdf.line(126, 800, 126, 770)\r\n                pdf.drawString(136, 777, data1)\r\n                pdf.line(450, 800, 450, 770)\r\n                pdf.drawString(460, 777, diaSem)\r\n                pdf.line(580, 800, 580, 770)\r\n                pdf.line(10, 770, 580, 770)\r\n\r\n                diaAux = diaSem\r\n\r\n            # TABELA PRINCIPAL\r\n            pdf.line(10, lin, 580, lin)  # ___\r\n            pdf.line(10, lin, 10, col)\r\n            pdf.setFont('Helvetica-Bold', 30)\r\n            pdf.drawString(20, tex, dado[0])\r\n            pdf.line(126, lin, 126, col)\r\n            pdf.setFont('Helvetica-Bold', 20)\r\n            pdf.drawString(136, tex, dado[1])\r\n            pdf.line(380, lin, 380, col)\r\n            pdf.line(450, lin, 450, col)\r\n            pdf.line(580, lin, 580, col)\r\n            lin -= 50\r\n            tex -= 50\r\n            col -= 50\r\n            pdf.line(10, lin, 580, lin)\r\n            pdf.setLineWidth(0.5)\r\n            pdf.line(10, 20, 580,20)\r\n            pdf.setFont('Helvetica', 8)\r\n            pdf.drawString(10, 10, 'Gerado por AgroLog v1.01 beta')\r\n\r\n    pdf.save()\r\n    while True:\r\n        resp = str(input('DESEJA IMPRIMIR O RELATÓRIO DOS ROTEIROS [S/N]: ')).upper()\r\n        if resp == 'S' or resp == 'N':\r\n            break\r\n        else:\r\n            print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n    if resp == 'S':\r\n        copia = leiaInt('Cópias: ')\r\n        imprime(relatorio, copia)\r\n    geraPlacas(arquivo, ini, fim)\r\n\r\n\r\ndef geraPlacas(arquivo, ini, fim):\r\n    dat_ini = datetime.strftime(ini, '%d-%m-%Y')\r\n    dat_fim = datetime.strftime(fim, '%d-%m-%Y')\r\n    relatorio = f'lib/arquivos/relatorio/programacao/placas {dat_ini} a {dat_fim}.pdf'\r\n    pdf = canvas.Canvas(relatorio, pagesize=A4)\r\n    pdf.setLineWidth(1)\r\n    try:\r\n        arq = open(arquivo, 'r')\r\n    except:\r\n        print(f'{cor(3)} Erro ao ler o arquivo {arquivo}!{cor(0)}')\r\n\r\n    for reg in arq:\r\n        dado = reg.split(';')\r\n        dado[2] = dado[2].replace('\\n', '')\r\n        dado[2] = datetime.strptime(dado[2], '%d/%m/%Y')\r\n\r\n        if ini <= dado[2] <= fim:\r\n            pdf.line(20, 830, 570, 830)\r\n            pdf.line(20, 15, 570, 15)\r\n            pdf.line(20, 830, 20, 15)\r\n            pdf.line(570, 830, 570, 15)\r\n\r\n            if dado[1] != 'REUNIDAS' and dado[1] != 'EXPRESSO':\r\n                if dado[1].count(' ') == 1:\r\n                    praca = dado[1].split()\r\n                    pdf.setFont('Helvetica-Bold', 170)\r\n                    pdf.drawCentredString(290, 630, dado[0])  # COL, LIN\r\n                    pdf.setFont('Helvetica-Bold', 90)\r\n                    pdf.drawCentredString(290, 350, praca[0])\r\n                    pdf.drawCentredString(290, 200, praca[1])\r\n                elif dado[1] == 'ARARANGUÁ':\r\n                    pdf.setFont('Helvetica-Bold', 170)\r\n                    pdf.drawCentredString(290, 630, dado[0])  # COL, LIN\r\n                    pdf.setFont('Helvetica-Bold', 80)\r\n                    pdf.drawCentredString(290, 320, 'ARARANGUÁ')\r\n\r\n                elif dado[1] == 'JARAGUÁ DO SUL':\r\n                    pdf.setFont('Helvetica-Bold', 170)\r\n                    pdf.drawCentredString(290, 630, dado[0])  # COL, LIN\r\n                    pdf.setFont('Helvetica-Bold', 90)\r\n                    pdf.drawCentredString(290, 320, 'JARAGUÁ')\r\n\r\n                elif dado[1] == 'RIO DO SUL':\r\n                    pdf.setFont('Helvetica-Bold', 170)\r\n                    pdf.drawCentredString(290, 630, dado[0])  # COL, LIN\r\n                    pdf.setFont('Helvetica-Bold', 90)\r\n                    pdf.drawCentredString(290, 320, dado[1])\r\n\r\n                else:\r\n                    pdf.setFont('Helvetica-Bold', 170)\r\n                    pdf.drawCentredString(290, 630, dado[0])  # COL, LIN\r\n                    pdf.setFont('Helvetica-Bold', 90)\r\n                    pdf.drawCentredString(290, 320, dado[1])\r\n                pdf.showPage()\r\n\r\n    # pagina com as datas\r\n\r\n    inicio = ini\r\n    flag = fim\r\n    tex = 741\r\n    lin = 681\r\n    while inicio <= flag:\r\n        pdf.setFont('Helvetica-Bold', 50)\r\n        pdf.setLineWidth(0.7)\r\n        semana = diaSemana(inicio)\r\n        data = datetime.strftime(inicio,'%d/%m/%Y')\r\n        pdf.drawString(40, tex, semana)\r\n        pdf.drawString(310, tex, data)\r\n        pdf.line(20, lin, 570, lin)\r\n        tex -= 165\r\n        lin -= 165\r\n        inicio = inicio + timedelta(days=1)\r\n    pdf.save()\r\n\r\n    while True:\r\n        resp = str(input('DESEJA IMPRIMIR AS PLACAS DA SACARIA? [S/N]: ')).upper()\r\n        if resp == 'S' or resp == 'N':\r\n            break\r\n        else:\r\n            print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n    if resp == 'S':\r\n        copia = leiaInt('Cópias: ')\r\n        imprime(relatorio, copia)\r\n\r\n\r\ndef controleKM(arq,dt):\r\n    data = datetime.strptime(dt,'%d/%m/%Y')\r\n    data += timedelta(days=1)\r\n\r\n    if diaSemana(data) == 'SABADO':\r\n        data += timedelta(days=2)\r\n    datarel = data.strftime('%d/%m/%Y')\r\n    dataarq = data.strftime('%d-%m-%y')\r\n    arqpdf = f'lib/arquivos/relatorio/programacao/controle_KM {dataarq}.pdf'\r\n    imagem = f'lib/arquivos/database/logo.jpg'\r\n    km = canvas.Canvas(arqpdf, pagesize=A4)\r\n    ori = open(arq, 'r') #arquivo de dados\r\n\r\n    for reg in ori:\r\n        dado = reg.split(';')\r\n        km.setFont('Helvetica-Bold', 22)\r\n        km.drawCentredString(mm(40), mm(249), dado[0])\r\n        km.drawCentredString(mm(124), mm(249), dado[1])\r\n        km.drawString(mm(70), mm(238), datarel)\r\n        km.drawString(mm(70), mm(228), dado[2])\r\n        km.drawString(mm(85), mm(228), dado[4])\r\n        km.drawString(mm(70), mm(218), dado[5])\r\n        km.drawImage(imagem, mm(16), mm(265), 99, 31)\r\n        km.setFont('Helvetica-Bold', 12)\r\n        km.drawString(mm(70), mm(267), 'CONTROLE DE QUILOMETRAGEM POR ORDEM DE CARGA')\r\n\r\n        km.setFont('Helvetica-Bold', 20)\r\n        km.rect(mm(16), mm(196), mm(180), mm(63))  # borda exterior\r\n        km.rect(mm(16), mm(246), mm(180), mm(13))  # linha 1\r\n        km.rect(mm(16), mm(236), mm(180), mm(10))  # linha 2\r\n        km.drawString(mm(19), mm(238), 'DATA')\r\n        km.rect(mm(16), mm(226), mm(180), mm(10))  # linha 3\r\n        km.drawString(mm(19), mm(228), 'CARRO')\r\n        km.rect(mm(16), mm(216), mm(180), mm(10))  # linha 4\r\n        km.drawString(mm(19), mm(218), 'MOTORISTA')\r\n        km.rect(mm(16), mm(206), mm(180), mm(10))  # linha 5\r\n        km.drawString(mm(19), mm(208), 'KM INICIAL')\r\n        km.line(mm(68), mm(259), mm(68), mm(196))  # coluna\r\n        km.drawString(mm(19), mm(198), 'KM FINAL')\r\n        km.setFont('Helvetica-Bold', 12)\r\n        km.drawString(mm(17), mm(187), 'OCORRÊNCIAS')\r\n\r\n        lin = 135\r\n        # ocorrencias\r\n        for c in range(0, 3):\r\n            km.rect(mm(16), mm(lin), mm(180), mm(50)) # retangulo borda externa 50mm x 180mm\r\n            km.line(mm(16), (mm(lin) + mm(45)), mm(196), (mm(lin) + mm(45))) # 1 linha ini +  linha col 16 ate col 196\r\n            km.line(mm(16), (mm(lin) + mm(35)), mm(196), (mm(lin) + mm(35))) # 2 linha col 16 ate col 196\r\n            km.line(mm(16), (mm(lin) + mm(30)), mm(196), (mm(lin) + mm(30)))\r\n            km.line(mm(16), (mm(lin) + mm(20)), mm(196), (mm(lin) + mm(20)))\r\n            km.line(mm(16), (mm(lin) + mm(10)), mm(196), (mm(lin) + mm(10)))\r\n            km.line(mm(45), (mm(lin) + mm(50)), mm(45), mm(lin))\r\n            km.line(mm(155), (mm(lin) + mm(35)), mm(155), mm(lin))\r\n            km.line(mm(175), (mm(lin) + mm(35)), mm(175), mm(lin))\r\n            km.setFont('Helvetica-Bold', 10)\r\n            km.drawString(mm(18), (mm(lin) + mm(46)), 'NF')\r\n            km.drawString(mm(47), (mm(lin) + mm(46)), 'CLIENTE / CIDADE')\r\n            km.drawString(mm(18), (mm(lin) + mm(31)), 'QDADE')\r\n            km.drawCentredString(mm(95), (mm(lin) + mm(31)), 'PRODUTO')\r\n            km.drawString(mm(157), (mm(lin) + mm(31)), 'FALTA')\r\n            km.drawString(mm(177), (mm(lin) + mm(31)), 'AVARIA')\r\n            lin -= 57\r\n        # retangulo com oc e contagem\r\n        km.setFont('Helvetica-Bold', 18)\r\n        km.rect(mm(115), mm(5), mm(80),  mm(10))\r\n        km.line(mm(155), mm(5), mm(155), mm(15))\r\n        km.drawString(mm(120), mm(7), \"OC \") #informa\r\n        km.drawString(mm(135), mm(7), dado[0])\r\n        km.drawString(mm(160), mm(7), \"VOL\")\r\n        # quebra pagina\r\n        km.showPage()\r\n    km.save()\r\n    while True:\r\n        resp = str(input('DESEJA IMPRIMIR OS CONTROLES DE KM? [S/N]: ')).upper()\r\n        if resp == 'S' or resp == 'N':\r\n            break\r\n        else:\r\n            print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n    if resp == 'S':\r\n        imprime(arqpdf)\r\n\r\n\r\ndef vistoria(arquivo, data):\r\n    data = datetime.strptime(data, '%d/%m/%Y')\r\n    dataArq = data.strftime('%d-%m-%y')\r\n    imagem = 'lib/arquivos/database/logo.jpg'\r\n    arqvis = f'lib/arquivos/relatorio/programacao/vistoria {dataArq}.pdf'\r\n    vis = canvas.Canvas(arqvis, pagesize=A4)\r\n    with open(arquivo, 'r') as dados:\r\n        for reg in dados:\r\n            dado = reg.split(';')\r\n            dado[8] = dado[8].replace('\\n', '')\r\n            vis.setFont('Helvetica-Bold', 13)\r\n            vis.drawString(mm(38), mm(257), dado[7])\r\n            vis.drawString(mm(157), mm(257), 'AGROSUL')\r\n            vis.drawString(mm(38), mm(248), dado[0])\r\n            vis.drawString(mm(157), mm(248), '47-3330-5747')\r\n            vis.drawString(mm(38), mm(239), dado[8])\r\n            vis.drawString(mm(38), mm(230), dado[4])\r\n            vis.drawString(mm(157), mm(230), dado[5])\r\n\r\n            ##### CONTRUÇÃO DO RELATORIO #####\r\n\r\n            # cabeçalho\r\n\r\n            vis.drawImage(imagem, mm(10), mm(275), 99, 31)\r\n            vis.drawString(mm(83), mm(278), 'ORDEM DE CARREGAMENTO')\r\n            vis.setLineWidth(0.2)\r\n            vis.line(mm(2), mm(268), mm(205), mm(268))\r\n\r\n            # primeiro bloco - dados do roteiro (oc, veiculo, motorista)\r\n            vis.setFont('Helvetica-Bold', 10)\r\n            vis.rect(mm(35), mm(255), mm(50), mm(7))\r\n            vis.drawString(mm(5), mm(257), ' Veiculo')\r\n            vis.rect(mm(35), mm(246), mm(50), mm(7))\r\n            vis.drawString(mm(5), mm(248), 'Ordem/Rota')\r\n            vis.rect(mm(35), mm(237), mm(50), mm(7))\r\n            vis.drawString(mm(5), mm(239), 'Data Expedição')\r\n            vis.rect(mm(35), mm(228), mm(50), mm(7))\r\n            vis.drawString(mm(5), mm(230), 'Placa Veiculo')\r\n            vis.rect(mm(155), mm(255), mm(50), mm(7))\r\n            vis.drawString(mm(125), mm(257), 'Transportadora')\r\n            vis.rect(mm(155), mm(246), mm(50), mm(7))\r\n            vis.drawString(mm(125), mm(248), 'Contato')\r\n            vis.rect(mm(155), mm(228), mm(50), mm(7))\r\n            vis.drawString(mm(125), mm(230), 'Motorista')\r\n\r\n            # segundo bloco - avaliação de segurança e meio ambiente\r\n            vis.setFillColorRGB(0.7, 0.7, 0.7)\r\n            vis.rect(mm(5), mm(218), mm(200), mm(6), fill=1)\r\n            vis.setFillColorRGB(0, 0, 0)\r\n            vis.setFont('Helvetica-Bold', 8)\r\n            vis.drawString(mm(50), mm(220), 'Avaliação de Segurança e Meio Ambiente')\r\n            vis.drawString(mm(146), mm(220), 'C    NC    NA       Observação/Medidas')\r\n\r\n            lin = 209\r\n            topicoSeg = [\r\n                'Os pneus não devem apresentar desgaste excessivo, trincos, ressolagem solta e avarias?',\r\n                'Farois,lanternas e setas estão funcionando?',\r\n                'Para-brisa e vidros laterais estão ausentes de tricos?',\r\n                'Ausência de vasamento de óleo ou graxa?',\r\n                'Conhecimento das normas de segurança e meio ambiente?',\r\n                'Luz de ré funcionando?',\r\n                'Luz de freio funcionando?'\r\n            ]\r\n            for i in range(0, 6):\r\n                vis.rect(mm(5), mm(lin), mm(200), mm(6), fill=0)\r\n                vis.line(mm(145), mm(lin), mm(145), mm(lin + 6))\r\n                vis.drawString(mm(6), mm(lin + 1), topicoSeg[i])\r\n                vis.drawString(mm(147), mm(lin + 2), 'x')\r\n                vis.line(mm(151), mm(lin), mm(151), mm(lin + 6))\r\n                vis.line(mm(157), mm(lin), mm(157), mm(lin + 6))\r\n                vis.line(mm(163), mm(lin), mm(163), mm(lin + 6))\r\n                lin -= 6\r\n\r\n            # terceiro bloco - Avaliação qualiodade e Bug Out\r\n\r\n            vis.setFillColorRGB(0.7, 0.7, 0.7)\r\n            vis.rect(mm(5), mm(170), mm(200), mm(6), fill=1)\r\n            vis.setFillColorRGB(0, 0, 0)\r\n            vis.setFont('Helvetica-Bold', 8)\r\n            vis.drawString(mm(50), mm(172), 'Avaliação de Qualidade e Bug Out')\r\n            vis.drawString(mm(146), mm(172), 'C    NC    NA       Observação/Medidas')\r\n\r\n            topicoQual = [\r\n                'Integridade do Baú?',\r\n                'Interior do Baú limpo?',\r\n                'Constatação de pragas?',\r\n                'Durante o embarque/desembarque foi constatado algum vestigio de praga?',\r\n                'Assoalho forrado com placas de papelão?',\r\n                'Placas de papelão sem vestigio de pragas?',\r\n                'Paletes de madeira sem vestigio de pragas?',\r\n                'Motorista uniformizado e com EPI?'\r\n            ]\r\n\r\n            lin = 161\r\n            for i in range(0, 8):\r\n                vis.rect(mm(5), mm(lin), mm(200), mm(6), fill=0)\r\n                vis.line(mm(145), mm(lin), mm(145), mm(lin + 6))\r\n                vis.drawString(mm(6), mm(lin + 1), topicoQual[i])\r\n                vis.drawString(mm(147), mm(lin + 2), 'x')\r\n                vis.line(mm(151), mm(lin), mm(151), mm(lin + 6))\r\n                vis.line(mm(157), mm(lin), mm(157), mm(lin + 6))\r\n                vis.line(mm(163), mm(lin), mm(163), mm(lin + 6))\r\n                lin -= 6\r\n\r\n            # quarto bloco -\r\n\r\n            vis.rect(mm(5), mm(110), mm(200), mm(6))\r\n            vis.setFillColorRGB(0, 0, 0)\r\n            vis.setFont('Helvetica-Bold', 8)\r\n            vis.drawString(mm(7), mm(112), 'Portas com cadeados -')\r\n\r\n            lin = 100\r\n            vis.setFont('Helvetica', 7)\r\n            vis.drawString(mm(5), mm(101), 'Tratativa (Observação/Medidas):')\r\n            for i in range(0, 5):\r\n                vis.line(mm(5), mm(lin), mm(205), mm(lin))\r\n                lin -= 4\r\n\r\n            vis.drawString(mm(5), mm(75), 'Data: _______/_______/________')\r\n            vis.drawString(mm(110), mm(75), 'Expedidor: __________________________________________')\r\n            vis.drawString(mm(125), mm(76), ' AGROSUL')\r\n            vis.drawString(mm(5), mm(70), 'Hora: _________________')\r\n            vis.drawString(mm(110), mm(65), 'Responsável pela verificação: _______________________')\r\n            vis.drawString(mm(110), mm(55), 'Motorista: __________________________________________')\r\n            vis.drawString(mm(125), mm(56), dado[5])\r\n            vis.setFont('Helvetica-Bold', 6)\r\n            vis.drawString(mm(110), mm(45), 'C: Significa \"CONFORME\", ou seja, o equipamento está em condições de uso')\r\n            vis.drawString(mm(110), mm(40),\r\n                           'NC: Signfica \"NÃO CONFORME\", ou seja, o equipamento não está em condiçõers de uso')\r\n            vis.drawString(mm(110), mm(35),\r\n                           'NA: Significa \"NÃO APLICÁVEL\",ou seja, o item não atende mais a realidade do equipamento')\r\n            vis.line(mm(2), mm(30), mm(205), mm(30))\r\n            vis.drawString(mm(5), mm(25), 'Senhores motoristas:')\r\n            vis.drawString(mm(5), mm(20),\r\n                           'Operador lhe informará o peso total da carga e a quantidade de paletes de sacos e caixas, '\r\n                           'onde os Srs lhe dizerão a devida disponibilidade dos paletes no veiculo,')\r\n            vis.drawString(mm(5), mm(15),\r\n                           'uma vez que se responsabiliza pela carga, após a saída do veiculo da Royal Canin do Brasil')\r\n\r\n            vis.showPage()\r\n\r\n    vis.save()\r\n    while True:\r\n        resp = str(input('DESEJA IMPRIMIR VISTORIAS? [S/N]: ')).upper()\r\n        if resp == 'S' or resp == 'N':\r\n            break\r\n        else:\r\n            print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n    if resp == 'S':\r\n        imprime(arqvis)\r\n        \r\n\r\ndef geraPlacasPicking(arquivo,data):\r\n    relatorio = f'lib/arquivos/relatorio/programacao/placasPicking.pdf'\r\n    pdf = canvas.Canvas(relatorio, pagesize=A4)\r\n    pdf.setLineWidth(1)\r\n    try:\r\n        arq = open(arquivo, 'r')\r\n    except:\r\n        print(f'{cor(3)} Erro ao ler o arquivo {arquivo}!{cor(0)}')\r\n\r\n    novaPag = True\r\n    for reg in arq:\r\n            dado = reg.split(';')\r\n            dado[2] = dado[2].replace('\\n', '')\r\n            if dado[2] == data:\r\n                dado[1] = dado[1].replace('FPOLIS', 'FP')\r\n                dado[1] = dado[1].replace('TIJUCAS PALHOÇA', 'TIJUCAS')\r\n                dado[1] = dado[1].replace('JARAGUÁ DO SUL', 'JARAGUA')\r\n                dado[1] = dado[1].replace('LITORAL NORTE', 'NAVEGA')\r\n                dado[1] = dado[1].replace('BALNEÁRIO CAMBORIU', 'B C ')\r\n                dado[1] = dado[1].replace('BRUSQUE GASPAR', 'BRUSQUE')\r\n                dado[1] = dado[1].replace('JLLE CEN/NOR', 'JVILLE')\r\n                dado[1] = dado[1].replace('JLLE CEN/SUL', 'JVILLE')\r\n\r\n                if novaPag:\r\n                    pdf.setFont('Helvetica-Bold', 120)\r\n                    pdf.drawCentredString(mm(105), mm(230), dado[0])  # COL, LIN\r\n                    pdf.setFont('Helvetica-Bold', 80)\r\n                    pdf.drawCentredString(mm(105), mm(170), dado[1])\r\n                    pdf.line(mm(10), mm(150), mm(200), mm(150))\r\n                    novaPag = False\r\n                else:\r\n                    pdf.setFont('Helvetica-Bold', 120)\r\n                    pdf.drawCentredString(mm(105), mm(80), dado[0])  # COL, LIN\r\n                    pdf.setFont('Helvetica-Bold', 80)\r\n                    pdf.drawCentredString(mm(105), mm(20), dado[1])\r\n                    novaPag = True\r\n                    pdf.showPage()\r\n                if dado[1] == 'CHAPECÓ':\r\n                    rotaChape = ['JOAÇABA', 'XANXERE', 'CONCORDIA']\r\n                    for rot in rotaChape:\r\n                        if novaPag:\r\n                            pdf.setFont('Helvetica-Bold', 120)\r\n                            pdf.drawCentredString(mm(105), mm(230), dado[0])  # COL, LIN\r\n                            pdf.setFont('Helvetica-Bold', 80)\r\n                            pdf.drawCentredString(mm(105), mm(170), rot)\r\n                            pdf.line(mm(10), mm(150), mm(200), mm(150))\r\n                            novaPag = False\r\n                        else:\r\n                            pdf.setFont('Helvetica-Bold', 120)\r\n                            pdf.drawCentredString(mm(105), mm(80), dado[0])  # COL, LIN\r\n                            pdf.setFont('Helvetica-Bold', 80)\r\n                            pdf.drawCentredString(mm(105), mm(20), rot)\r\n                            novaPag = True\r\n                            pdf.showPage()\r\n    pdf.save()\r\n    return relatorio\r\n\r\n\r\ndef pdftojpg(pdf_path, output_dir):\r\n    doc = fitz.open(pdf_path)\r\n    for i in range(len(doc)):\r\n        page = doc.load_page(i)\r\n        pix = page.get_pixmap()\r\n        imagem = f\"{output_dir}/imagem_{i + 1}.jpg\"\r\n        pix.save(imagem, \"JPEG\")\r\n    return imagem\r\n\r\ndef imprime(arquivo, copias):\r\n    diretorio = os.getcwd().replace(\"\\\\\", \"/\") + '/' + str(arquivo)\r\n    arq = diretorio\r\n    n = 1\r\n    while n <= copias:\r\n        os.startfile(arq, 'print')\r\n        n += 1\r\n    print('imprimindo arquivo ... ' + str(arq))\r\n    sleep(3)\r\n    input('pressione ENTER para continuar...')\r\n    if diretorio.endswith('.pdf'):\r\n        os.system(\"taskkill /f /im Acrobat.exe\")  # if aqruivo for pdf, feche o acrobat\r\n    #win32api.ShellExecute(0, 'print', os.path.join(arq), None, '.', 0)\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/arquivos/relatorios.py b/lib/arquivos/relatorios.py
+--- a/lib/arquivos/relatorios.py	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/lib/arquivos/relatorios.py	(date 1693588443316)
+@@ -277,7 +277,7 @@
+             pdf.setLineWidth(0.5)
+             pdf.line(10, 20, 580,20)
+             pdf.setFont('Helvetica', 8)
+-            pdf.drawString(10, 10, 'Gerado por AgroLog v1.01 beta')
++            pdf.drawString(10, 10, 'Gerado por Focus v1.0')
+ 
+     pdf.save()
+     while True:
+Index: lib/arquivos/database/oc_semana1.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>100;REUNIDAS;22/05/2023;5219\r\n101;EXPRESSO;22/05/2023;6702\r\n102;BALNEÁRIO CAMBORIU;22/05/2023;5834\r\n103;ITAJAI;22/05/2023;5834\r\n104;TIJUCAS PALHO?A;22/05/2023;493\r\n105;TUBARÃO;22/05/2023;493\r\n106;FPOLIS CENTRO;22/05/2023;493\r\n107;SÃO JOSÉ;22/05/2023;493\r\n108;BNU SUL/LES;22/05/2023;493\r\n100;REUNIDAS;23/05/2023;5219\r\n101;EXPRESSO;23/05/2023;6702\r\n109;ARARANGUÁ;23/05/2023;493\r\n110;SÃO JOSÉ;23/05/2023;493\r\n111;FPOLIS CENTRO;23/05/2023;493\r\n112;JLLE CEN/NOR;23/05/2023;493\r\n113;BNU NOR/OES;23/05/2023;493\r\n100;REUNIDAS;24/05/2023;5219\r\n101;EXPRESSO;24/05/2023;6702\r\n114;JARAGUÁ DO SUL;24/05/2023;5834\r\n115;SÃO JOSÉ;24/05/2023;493\r\n116;FPOLIS NORTE;24/05/2023;493\r\n117;PORTO BELO;24/05/2023;493\r\n118;BNU SUL/LES;24/05/2023;493\r\n100;REUNIDAS;25/05/2023;5219\r\n101;EXPRESSO;25/05/2023;6702\r\n119;BALNEÁRIO CAMBORIU;25/05/2023;5834\r\n120;ITAJAI;25/05/2023;5834\r\n121;FPOLIS CENTRO;25/05/2023;493\r\n122;FPOLIS SUL;25/05/2023;493\r\n123;RIO DO SUL;25/05/2023;493\r\n124;LITORAL NORTE;25/05/2023;493\r\n125;JLLE CEN/SUL;25/05/2023;493\r\n100;REUNIDAS;26/05/2023;5219\r\n101;EXPRESSO;26/05/2023;6702\r\n126;MAFRA;26/05/2023;493\r\n127;BRUSQUE GASPAR;26/05/2023;493\r\n128;BNU NOR/OES;26/05/2023;493\r\n129;CHAPECÓ;26/05/2023;493\r\n100;REUNIDAS;29/05/2023;5219\r\n101;EXPRESSO;29/05/2023;6702\r\n102;BALNEÁRIO CAMBORIU;29/05/2023;5834\r\n103;ITAJAI;29/05/2023;5834\r\n104;TIJUCAS PALHOÇA;29/05/2023;493\r\n105;TUBARÃO;29/05/2023;493\r\n106;FPOLIS CENTRO;29/05/2023;493\r\n107;SÃO JOSÉ;29/05/2023;493\r\n108;BNU SUL/LES;29/05/2023;493\r\n100;REUNIDAS;30/05/2023;5219\r\n101;EXPRESSO;30/05/2023;6702\r\n109;ARARANGUÁ;30/05/2023;493\r\n110;SÃO JOSÉ;30/05/2023;493\r\n111;FPOLIS CENTRO;30/05/2023;493\r\n112;JLLE CEN/NOR;30/05/2023;493\r\n113;BNU NOR/OES;30/05/2023;493\r\n100;REUNIDAS;31/05/2023;5219\r\n101;EXPRESSO;31/05/2023;6702\r\n114;JARAGUÁ DO SUL;31/05/2023;5834\r\n115;SÃO JOSÉ;31/05/2023;493\r\n116;FPOLIS NORTE;31/05/2023;493\r\n117;PORTO BELO;31/05/2023;493\r\n118;BNU SUL/LES;31/05/2023;493\r\n100;REUNIDAS;01/06/2023;5219\r\n101;EXPRESSO;01/06/2023;6702\r\n119;BALNEÁRIO CAMBORIU;01/06/2023;5834\r\n120;ITAJAI;01/06/2023;5834\r\n121;FPOLIS CENTRO;01/06/2023;493\r\n122;FPOLIS SUL;01/06/2023;493\r\n123;RIO DO SUL;01/06/2023;493\r\n124;LITORAL NORTE;01/06/2023;493\r\n125;JLLE CEN/SUL;01/06/2023;493\r\n100;REUNIDAS;02/06/2023;5219\r\n101;EXPRESSO;02/06/2023;6702\r\n126;MAFRA;02/06/2023;493\r\n127;BRUSQUE GASPAR;02/06/2023;493\r\n128;BNU NOR/OES;02/06/2023;493\r\n129;CHAPECÓ;02/06/2023;493\r\n130;LAGES;02/06/2023;493\r\n100;REUNIDAS;05/06/2023;5219\r\n101;EXPRESSO;05/06/2023;6702\r\n102;BALNEÁRIO CAMBORIU;05/06/2023;121493\r\n103;ITAJAI;05/06/2023;121493\r\n104;TIJUCAS;05/06/2023;493\r\n105;TUBARÃO;05/06/2023;493\r\n106;FPOLIS CENTRO;05/06/2023;493\r\n107;SÃO JOSÉ;05/06/2023;493\r\n108;BNU SUL/LES;05/06/2023;493\r\n109;ARARANGUÁ;05/06/2023;493\r\n100;REUNIDAS;06/06/2023;5219\r\n101;EXPRESSO;06/06/2023;6702\r\n110;SÃO JOSÉ;06/06/2023;493\r\n111;FPOLIS CENTRO;06/06/2023;493\r\n112;JOINVILLE;06/06/2023;493\r\n113;BNU NOR/OES;06/06/2023;493\r\n114;JARAGUÁ DO SUL;06/06/2023;121493\r\n100;REUNIDAS;07/06/2023;5219\r\n101;EXPRESSO;07/06/2023;6702\r\n116;FPOLIS NORTE;07/06/2023;493\r\n117;PORTO BELO;07/06/2023;493\r\n119;BALNEARIO CAMBORIU;07/06/2023;121493\r\n120;ITAJAI;07/06/2023;121493\r\n122;FPOLIS SUL;07/06/2023;493\r\n123;RIO DO SUL;07/06/2023;493\r\n124;LITORAL NORTE;07/06/2023;493\r\n100;REUNIDAS;09/06/2023;5219\r\n101;EXPRESSO;09/06/2023;6702\r\n126;MAFRA;09/06/2023;493\r\n127;BRUSQUE;09/06/2023;493\r\n128;BLUMENAU;09/06/2023;493\r\n129;CHAPECÓ;09/06/2023;493\r\n100;REUNIDAS;12/06/2023;5219\r\n101;EXPRESSO;12/06/2023;6702\r\n102;BALNEÁRIO CAMBORIU;12/06/2023;5834\r\n103;ITAJAI;12/06/2023;5834\r\n104;TIJUCAS PALHOÇA;12/06/2023;493\r\n105;TUBARÃO;12/06/2023;493\r\n106;FPOLIS CENTRO;12/06/2023;493\r\n107;SÃO JOSÉ;12/06/2023;493\r\n108;BNU SUL/LES;12/06/2023;493\r\n100;REUNIDAS;13/06/2023;5219\r\n101;EXPRESSO;13/06/2023;6702\r\n109;ARARANGUÁ;13/06/2023;493\r\n110;SÃO JOSÉ;13/06/2023;493\r\n111;FPOLIS CENTRO;13/06/2023;493\r\n112;JLLE CEN/NOR;13/06/2023;493\r\n113;BNU NOR/OES;13/06/2023;493\r\n100;REUNIDAS;14/06/2023;5219\r\n101;EXPRESSO;14/06/2023;6702\r\n114;JARAGUÁ DO SUL;14/06/2023;5834\r\n115;SÃO JOSÉ;14/06/2023;493\r\n116;FPOLIS NORTE;14/06/2023;493\r\n117;PORTO BELO;14/06/2023;493\r\n118;BNU SUL/LES;14/06/2023;493\r\n100;REUNIDAS;15/06/2023;5219\r\n101;EXPRESSO;15/06/2023;6702\r\n119;BALNEÁRIO CAMBORIU;15/06/2023;5834\r\n120;ITAJAI;15/06/2023;5834\r\n121;FPOLIS CENTRO;15/06/2023;493\r\n122;FPOLIS SUL;15/06/2023;493\r\n123;RIO DO SUL;15/06/2023;493\r\n124;LITORAL NORTE;15/06/2023;493\r\n125;JLLE CEN/SUL;15/06/2023;493\r\n100;REUNIDAS;16/06/2023;5219\r\n101;EXPRESSO;16/06/2023;6702\r\n126;MAFRA;16/06/2023;493\r\n127;BRUSQUE GASPAR;16/06/2023;493\r\n128;BNU NOR/OES;16/06/2023;493\r\n129;CHAPECÓ;16/06/2023;493\r\n130;LAGES;16/06/2023;493\r\n100;REUNIDAS;19/06/2023;5219\r\n101;EXPRESSO;19/06/2023;6702\r\n102;BALNEÁRIO CAMBORIU;19/06/2023;5834\r\n103;ITAJAI;19/06/2023;5834\r\n104;TIJUCAS PALHOÇA;19/06/2023;493\r\n105;TUBARÃO;19/06/2023;493\r\n106;FPOLIS CENTRO;19/06/2023;493\r\n107;SÃO JOSÉ;19/06/2023;493\r\n108;BNU SUL/LES;19/06/2023;493\r\n100;REUNIDAS;20/06/2023;5219\r\n101;EXPRESSO;20/06/2023;6702\r\n109;ARARANGUÁ;20/06/2023;493\r\n110;SÃO JOSÉ;20/06/2023;493\r\n111;FPOLIS CENTRO;20/06/2023;493\r\n112;JLLE CEN/NOR;20/06/2023;493\r\n113;BNU NOR/OES;20/06/2023;493\r\n100;REUNIDAS;21/06/2023;5219\r\n101;EXPRESSO;21/06/2023;6702\r\n114;JARAGUÁ DO SUL;21/06/2023;5834\r\n115;SÃO JOSÉ;21/06/2023;493\r\n116;FPOLIS NORTE;21/06/2023;493\r\n117;PORTO BELO;21/06/2023;493\r\n118;BNU SUL/LES;21/06/2023;493\r\n100;REUNIDAS;22/06/2023;5219\r\n101;EXPRESSO;22/06/2023;6702\r\n119;BALNEÁRIO CAMBORIU;22/06/2023;5834\r\n120;ITAJAI;22/06/2023;5834\r\n121;FPOLIS CENTRO;22/06/2023;493\r\n122;FPOLIS SUL;22/06/2023;493\r\n123;RIO DO SUL;22/06/2023;493\r\n124;LITORAL NORTE;22/06/2023;493\r\n125;JLLE CEN/SUL;22/06/2023;493\r\n100;REUNIDAS;23/06/2023;5219\r\n101;EXPRESSO;23/06/2023;6702\r\n126;MAFRA;23/06/2023;493\r\n127;BRUSQUE GASPAR;23/06/2023;493\r\n128;BNU NOR/OES;23/06/2023;493\r\n129;CHAPECÓ;23/06/2023;493\r\n100;REUNIDAS;26/06/2023;5219\r\n101;EXPRESSO;26/06/2023;6702\r\n102;BALNEÁRIO CAMBORIU;26/06/2023;5834\r\n103;ITAJAI;26/06/2023;5834\r\n104;TIJUCAS PALHOÇA;26/06/2023;493\r\n105;TUBARÃO;26/06/2023;493\r\n106;FPOLIS CENTRO;26/06/2023;493\r\n107;SÃO JOSÉ;26/06/2023;493\r\n108;BNU SUL/LES;26/06/2023;493\r\n100;REUNIDAS;27/06/2023;5219\r\n101;EXPRESSO;27/06/2023;6702\r\n109;ARARANGUÁ;27/06/2023;493\r\n110;SÃO JOSÉ;27/06/2023;493\r\n111;FPOLIS CENTRO;27/06/2023;493\r\n112;JLLE CEN/NOR;27/06/2023;493\r\n113;BNU NOR/OES;27/06/2023;493\r\n100;REUNIDAS;28/06/2023;5219\r\n101;EXPRESSO;28/06/2023;6702\r\n114;JARAGUÁ DO SUL;28/06/2023;5834\r\n115;SÃO JOSÉ;28/06/2023;493\r\n116;FPOLIS NORTE;28/06/2023;493\r\n117;PORTO BELO;28/06/2023;493\r\n118;BNU SUL/LES;28/06/2023;493\r\n100;REUNIDAS;29/06/2023;5219\r\n101;EXPRESSO;29/06/2023;6702\r\n119;BALNEÁRIO CAMBORIU;29/06/2023;5834\r\n120;ITAJAI;29/06/2023;5834\r\n121;FPOLIS CENTRO;29/06/2023;493\r\n122;FPOLIS SUL;29/06/2023;493\r\n123;RIO DO SUL;29/06/2023;493\r\n124;LITORAL NORTE;29/06/2023;493\r\n125;JLLE CEN/SUL;29/06/2023;493\r\n100;REUNIDAS;30/06/2023;5219\r\n101;EXPRESSO;30/06/2023;6702\r\n126;MAFRA;30/06/2023;493\r\n127;BRUSQUE GASPAR;30/06/2023;493\r\n128;BNU NOR/OES;30/06/2023;493\r\n129;CHAPECÓ;30/06/2023;493\r\n130;LAGES;30/06/2023;493\r\n100;REUNIDAS;03/07/2023;5219\r\n101;EXPRESSO;03/07/2023;6702\r\n102;BALNEÁRIO CAMBORIU;03/07/2023;5834\r\n103;ITAJAI;03/07/2023;5834\r\n104;TIJUCAS PALHOÇA;03/07/2023;493\r\n105;TUBARÃO;03/07/2023;493\r\n106;FPOLIS CENTRO;03/07/2023;493\r\n107;SÃO JOSÉ;03/07/2023;493\r\n108;BNU SUL/LES;03/07/2023;493\r\n100;REUNIDAS;04/07/2023;5219\r\n101;EXPRESSO;04/07/2023;6702\r\n109;ARARANGUÁ;04/07/2023;493\r\n110;SÃO JOSÉ;04/07/2023;493\r\n111;FPOLIS CENTRO;04/07/2023;493\r\n112;JLLE CEN/NOR;04/07/2023;493\r\n113;BNU NOR/OES;04/07/2023;493\r\n100;REUNIDAS;05/07/2023;5219\r\n101;EXPRESSO;05/07/2023;6702\r\n114;JARAGUÁ DO SUL;05/07/2023;5834\r\n115;SÃO JOSÉ;05/07/2023;493\r\n116;FPOLIS NORTE;05/07/2023;493\r\n117;PORTO BELO;05/07/2023;493\r\n118;BNU SUL/LES;05/07/2023;493\r\n100;REUNIDAS;06/07/2023;5219\r\n101;EXPRESSO;06/07/2023;6702\r\n119;BALNEÁRIO CAMBORIU;06/07/2023;5834\r\n120;ITAJAI;06/07/2023;5834\r\n121;FPOLIS CENTRO;06/07/2023;493\r\n122;FPOLIS SUL;06/07/2023;493\r\n123;RIO DO SUL;06/07/2023;493\r\n124;LITORAL NORTE;06/07/2023;493\r\n125;JLLE CEN/SUL;06/07/2023;493\r\n100;REUNIDAS;07/07/2023;5219\r\n101;EXPRESSO;07/07/2023;6702\r\n126;MAFRA;07/07/2023;493\r\n127;BRUSQUE GASPAR;07/07/2023;493\r\n128;BNU NOR/OES;07/07/2023;493\r\n129;CHAPECÓ;07/07/2023;493\r\n100;REUNIDAS;10/07/2023;5219\r\n101;EXPRESSO;10/07/2023;6702\r\n102;BALNEÁRIO CAMBORIU;10/07/2023;5834\r\n103;ITAJAI;10/07/2023;5834\r\n104;TIJUCAS PALHOÇA;10/07/2023;493\r\n105;TUBARÃO;10/07/2023;493\r\n106;FPOLIS CENTRO;10/07/2023;493\r\n107;SÃO JOSÉ;10/07/2023;493\r\n108;BNU SUL/LES;10/07/2023;493\r\n100;REUNIDAS;11/07/2023;5219\r\n101;EXPRESSO;11/07/2023;6702\r\n109;ARARANGUÁ;11/07/2023;493\r\n110;SÃO JOSÉ;11/07/2023;493\r\n111;FPOLIS CENTRO;11/07/2023;493\r\n112;JLLE CEN/NOR;11/07/2023;493\r\n113;BNU NOR/OES;11/07/2023;493\r\n100;REUNIDAS;12/07/2023;5219\r\n101;EXPRESSO;12/07/2023;6702\r\n114;JARAGUÁ DO SUL;12/07/2023;5834\r\n115;SÃO JOSÉ;12/07/2023;493\r\n116;FPOLIS NORTE;12/07/2023;493\r\n117;PORTO BELO;12/07/2023;493\r\n118;BNU SUL/LES;12/07/2023;493\r\n100;REUNIDAS;13/07/2023;5219\r\n101;EXPRESSO;13/07/2023;6702\r\n119;BALNEÁRIO CAMBORIU;13/07/2023;5834\r\n120;ITAJAI;13/07/2023;5834\r\n121;FPOLIS CENTRO;13/07/2023;493\r\n122;FPOLIS SUL;13/07/2023;493\r\n123;RIO DO SUL;13/07/2023;493\r\n124;LITORAL NORTE;13/07/2023;493\r\n125;JLLE CEN/SUL;13/07/2023;493\r\n100;REUNIDAS;14/07/2023;5219\r\n101;EXPRESSO;14/07/2023;6702\r\n126;MAFRA;14/07/2023;493\r\n127;BRUSQUE GASPAR;14/07/2023;493\r\n128;BNU NOR/OES;14/07/2023;493\r\n129;CHAPECÓ;14/07/2023;493\r\n130;LAGES;14/07/2023;493\r\n100;REUNIDAS;17/07/2023;5219\r\n101;EXPRESSO;17/07/2023;6702\r\n102;BALNEÁRIO CAMBORIU;17/07/2023;5834\r\n103;ITAJAI;17/07/2023;5834\r\n104;TIJUCAS PALHOÇA;17/07/2023;493\r\n105;TUBARÃO;17/07/2023;493\r\n106;FPOLIS CENTRO;17/07/2023;493\r\n107;SÃO JOSÉ;17/07/2023;493\r\n108;BNU SUL/LES;17/07/2023;493\r\n100;REUNIDAS;18/07/2023;5219\r\n101;EXPRESSO;18/07/2023;6702\r\n109;ARARANGUÁ;18/07/2023;493\r\n110;SÃO JOSÉ;18/07/2023;493\r\n111;FPOLIS CENTRO;18/07/2023;493\r\n112;JLLE CEN/NOR;18/07/2023;493\r\n113;BNU NOR/OES;18/07/2023;493\r\n100;REUNIDAS;19/07/2023;5219\r\n101;EXPRESSO;19/07/2023;6702\r\n114;JARAGUÁ DO SUL;19/07/2023;5834\r\n115;SÃO JOSÉ;19/07/2023;493\r\n116;FPOLIS NORTE;19/07/2023;493\r\n117;PORTO BELO;19/07/2023;493\r\n118;BNU SUL/LES;19/07/2023;493\r\n100;REUNIDAS;20/07/2023;5219\r\n101;EXPRESSO;20/07/2023;6702\r\n119;BALNEÁRIO CAMBORIU;20/07/2023;5834\r\n120;ITAJAI;20/07/2023;5834\r\n121;FPOLIS CENTRO;20/07/2023;493\r\n122;FPOLIS SUL;20/07/2023;493\r\n123;RIO DO SUL;20/07/2023;493\r\n124;LITORAL NORTE;20/07/2023;493\r\n125;JLLE CEN/SUL;20/07/2023;493\r\n100;REUNIDAS;21/07/2023;5219\r\n101;EXPRESSO;21/07/2023;6702\r\n126;MAFRA;21/07/2023;493\r\n127;BRUSQUE GASPAR;21/07/2023;493\r\n128;BNU NOR/OES;21/07/2023;493\r\n129;CHAPECÓ;21/07/2023;493\r\n100;REUNIDAS;24/07/2023;5219\r\n101;EXPRESSO;24/07/2023;6702\r\n102;BALNEÁRIO CAMBORIU;24/07/2023;5834\r\n103;ITAJAI;24/07/2023;5834\r\n104;TIJUCAS PALHOÇA;24/07/2023;493\r\n105;TUBARÃO;24/07/2023;493\r\n106;FPOLIS CENTRO;24/07/2023;493\r\n107;SÃO JOSÉ;24/07/2023;493\r\n108;BNU SUL/LES;24/07/2023;493\r\n100;REUNIDAS;25/07/2023;5219\r\n101;EXPRESSO;25/07/2023;6702\r\n109;ARARANGUÁ;25/07/2023;493\r\n110;SÃO JOSÉ;25/07/2023;493\r\n111;FPOLIS CENTRO;25/07/2023;493\r\n112;JLLE CEN/NOR;25/07/2023;493\r\n113;BNU NOR/OES;25/07/2023;493\r\n100;REUNIDAS;26/07/2023;5219\r\n101;EXPRESSO;26/07/2023;6702\r\n114;JARAGUÁ DO SUL;26/07/2023;5834\r\n115;SÃO JOSÉ;26/07/2023;493\r\n116;FPOLIS NORTE;26/07/2023;493\r\n117;PORTO BELO;26/07/2023;493\r\n118;BNU SUL/LES;26/07/2023;493\r\n100;REUNIDAS;27/07/2023;5219\r\n101;EXPRESSO;27/07/2023;6702\r\n119;BALNEÁRIO CAMBORIU;27/07/2023;5834\r\n120;ITAJAI;27/07/2023;5834\r\n121;FPOLIS CENTRO;27/07/2023;493\r\n122;FPOLIS SUL;27/07/2023;493\r\n123;RIO DO SUL;27/07/2023;493\r\n124;LITORAL NORTE;27/07/2023;493\r\n125;JLLE CEN/SUL;27/07/2023;493\r\n100;REUNIDAS;28/07/2023;5219\r\n101;EXPRESSO;28/07/2023;6702\r\n126;MAFRA;28/07/2023;493\r\n127;BRUSQUE GASPAR;28/07/2023;493\r\n128;BNU NOR/OES;28/07/2023;493\r\n129;CHAPECÓ;28/07/2023;493\r\n130;LAGES;28/07/2023;493\r\n100;REUNIDAS;31/07/2023;5219\r\n101;EXPRESSO;31/07/2023;6702\r\n102;BALNEÁRIO CAMBORIU;31/07/2023;5834\r\n103;ITAJAI;31/07/2023;5834\r\n104;TIJUCAS PALHOÇA;31/07/2023;493\r\n105;TUBARÃO;31/07/2023;493\r\n106;FPOLIS CENTRO;31/07/2023;493\r\n107;SÃO JOSÉ;31/07/2023;493\r\n108;BNU SUL/LES;31/07/2023;493\r\n100;REUNIDAS;01/08/2023;5219\r\n101;EXPRESSO;01/08/2023;6702\r\n109;ARARANGUÁ;01/08/2023;493\r\n110;SÃO JOSÉ;01/08/2023;493\r\n111;FPOLIS CENTRO;01/08/2023;493\r\n112;JLLE CEN/NOR;01/08/2023;493\r\n113;BNU NOR/OES;01/08/2023;493\r\n100;REUNIDAS;02/08/2023;5219\r\n101;EXPRESSO;02/08/2023;6702\r\n114;JARAGUÁ DO SUL;02/08/2023;5834\r\n115;SÃO JOSÉ;02/08/2023;493\r\n116;FPOLIS NORTE;02/08/2023;493\r\n117;PORTO BELO;02/08/2023;493\r\n118;BNU SUL/LES;02/08/2023;493\r\n100;REUNIDAS;03/08/2023;5219\r\n101;EXPRESSO;03/08/2023;6702\r\n119;BALNEÁRIO CAMBORIU;03/08/2023;5834\r\n120;ITAJAI;03/08/2023;5834\r\n121;FPOLIS CENTRO;03/08/2023;493\r\n122;FPOLIS SUL;03/08/2023;493\r\n123;RIO DO SUL;03/08/2023;493\r\n124;LITORAL NORTE;03/08/2023;493\r\n125;JLLE CEN/SUL;03/08/2023;493\r\n100;REUNIDAS;04/08/2023;5219\r\n101;EXPRESSO;04/08/2023;6702\r\n126;MAFRA;04/08/2023;493\r\n127;BRUSQUE GASPAR;04/08/2023;493\r\n128;BNU NOR/OES;04/08/2023;493\r\n129;CHAPECÓ;04/08/2023;493\r\n100;REUNIDAS;07/08/2023;5219\r\n101;EXPRESSO;07/08/2023;6702\r\n102;BALNEÁRIO CAMBORIU;07/08/2023;5834\r\n103;ITAJAI;07/08/2023;5834\r\n104;TIJUCAS PALHOÇA;07/08/2023;493\r\n105;TUBARÃO;07/08/2023;493\r\n106;FPOLIS CENTRO;07/08/2023;493\r\n107;SÃO JOSÉ;07/08/2023;493\r\n108;BNU SUL/LES;07/08/2023;493\r\n100;REUNIDAS;08/08/2023;5219\r\n101;EXPRESSO;08/08/2023;6702\r\n109;ARARANGUÁ;08/08/2023;493\r\n110;SÃO JOSÉ;08/08/2023;493\r\n111;FPOLIS CENTRO;08/08/2023;493\r\n112;JLLE CEN/NOR;08/08/2023;493\r\n113;BNU NOR/OES;08/08/2023;493\r\n100;REUNIDAS;09/08/2023;5219\r\n101;EXPRESSO;09/08/2023;6702\r\n114;JARAGUÁ DO SUL;09/08/2023;5834\r\n115;SÃO JOSÉ;09/08/2023;493\r\n116;FPOLIS NORTE;09/08/2023;493\r\n117;PORTO BELO;09/08/2023;493\r\n118;BNU SUL/LES;09/08/2023;493\r\n100;REUNIDAS;10/08/2023;5219\r\n101;EXPRESSO;10/08/2023;6702\r\n119;BALNEÁRIO CAMBORIU;10/08/2023;5834\r\n120;ITAJAI;10/08/2023;5834\r\n121;FPOLIS CENTRO;10/08/2023;493\r\n122;FPOLIS SUL;10/08/2023;493\r\n123;RIO DO SUL;10/08/2023;493\r\n124;LITORAL NORTE;10/08/2023;493\r\n125;JLLE CEN/SUL;10/08/2023;493\r\n100;REUNIDAS;11/08/2023;5219\r\n101;EXPRESSO;11/08/2023;6702\r\n126;MAFRA;11/08/2023;493\r\n127;BRUSQUE GASPAR;11/08/2023;493\r\n128;BNU NOR/OES;11/08/2023;493\r\n129;CHAPECÓ;11/08/2023;493\r\n130;LAGES;11/08/2023;493\r\n100;REUNIDAS;14/08/2023;5219\r\n101;EXPRESSO;14/08/2023;6702\r\n102;BALNEÁRIO CAMBORIU;14/08/2023;5834\r\n103;ITAJAI;14/08/2023;5834\r\n104;TIJUCAS PALHOÇA;14/08/2023;493\r\n105;TUBARÃO;14/08/2023;493\r\n106;FPOLIS CENTRO;14/08/2023;493\r\n107;SÃO JOSÉ;14/08/2023;493\r\n108;BNU SUL/LES;14/08/2023;493\r\n100;REUNIDAS;15/08/2023;5219\r\n101;EXPRESSO;15/08/2023;6702\r\n109;ARARANGUÁ;15/08/2023;493\r\n110;SÃO JOSÉ;15/08/2023;493\r\n111;FPOLIS CENTRO;15/08/2023;493\r\n112;JLLE CEN/NOR;15/08/2023;493\r\n113;BNU NOR/OES;15/08/2023;493\r\n100;REUNIDAS;16/08/2023;5219\r\n101;EXPRESSO;16/08/2023;6702\r\n114;JARAGUÁ DO SUL;16/08/2023;5834\r\n115;SÃO JOSÉ;16/08/2023;493\r\n116;FPOLIS NORTE;16/08/2023;493\r\n117;PORTO BELO;16/08/2023;493\r\n118;BNU SUL/LES;16/08/2023;493\r\n100;REUNIDAS;17/08/2023;5219\r\n101;EXPRESSO;17/08/2023;6702\r\n119;BALNEÁRIO CAMBORIU;17/08/2023;5834\r\n120;ITAJAI;17/08/2023;5834\r\n121;FPOLIS CENTRO;17/08/2023;493\r\n122;FPOLIS SUL;17/08/2023;493\r\n123;RIO DO SUL;17/08/2023;493\r\n124;LITORAL NORTE;17/08/2023;493\r\n125;JLLE CEN/SUL;17/08/2023;493\r\n100;REUNIDAS;18/08/2023;5219\r\n101;EXPRESSO;18/08/2023;6702\r\n126;MAFRA;18/08/2023;493\r\n127;BRUSQUE GASPAR;18/08/2023;493\r\n128;BNU NOR/OES;18/08/2023;493\r\n129;CHAPECÓ;18/08/2023;493\r\n100;REUNIDAS;21/08/2023;5219\r\n101;EXPRESSO;21/08/2023;6702\r\n102;BALNEÁRIO CAMBORIU;21/08/2023;5834\r\n103;ITAJAI;21/08/2023;5834\r\n104;TIJUCAS PALHOÇA;21/08/2023;493\r\n105;TUBARÃO;21/08/2023;493\r\n106;FPOLIS CENTRO;21/08/2023;493\r\n107;SÃO JOSÉ;21/08/2023;493\r\n108;BNU SUL/LES;21/08/2023;493\r\n100;REUNIDAS;22/08/2023;5219\r\n101;EXPRESSO;22/08/2023;6702\r\n109;ARARANGUÁ;22/08/2023;493\r\n110;SÃO JOSÉ;22/08/2023;493\r\n111;FPOLIS CENTRO;22/08/2023;493\r\n112;JLLE CEN/NOR;22/08/2023;493\r\n113;BNU NOR/OES;22/08/2023;493\r\n100;REUNIDAS;23/08/2023;5219\r\n101;EXPRESSO;23/08/2023;6702\r\n114;JARAGUÁ DO SUL;23/08/2023;5834\r\n115;SÃO JOSÉ;23/08/2023;493\r\n116;FPOLIS NORTE;23/08/2023;493\r\n117;PORTO BELO;23/08/2023;493\r\n118;BNU SUL/LES;23/08/2023;493\r\n100;REUNIDAS;24/08/2023;5219\r\n101;EXPRESSO;24/08/2023;6702\r\n119;BALNEÁRIO CAMBORIU;24/08/2023;5834\r\n120;ITAJAI;24/08/2023;5834\r\n121;FPOLIS CENTRO;24/08/2023;493\r\n122;FPOLIS SUL;24/08/2023;493\r\n123;RIO DO SUL;24/08/2023;493\r\n124;LITORAL NORTE;24/08/2023;493\r\n125;JLLE CEN/SUL;24/08/2023;493\r\n100;REUNIDAS;25/08/2023;5219\r\n101;EXPRESSO;25/08/2023;6702\r\n126;MAFRA;25/08/2023;493\r\n127;BRUSQUE GASPAR;25/08/2023;493\r\n128;BNU NOR/OES;25/08/2023;493\r\n129;CHAPECÓ;25/08/2023;493\r\n130;LAGES;25/08/2023;493\r\n100;REUNIDAS;28/08/2023;5219\r\n101;EXPRESSO;28/08/2023;6702\r\n102;BALNEÁRIO CAMBORIU;28/08/2023;5834\r\n103;ITAJAI;28/08/2023;5834\r\n104;TIJUCAS PALHOÇA;28/08/2023;493\r\n105;TUBARÃO;28/08/2023;493\r\n106;FPOLIS CENTRO;28/08/2023;493\r\n107;SÃO JOSÉ;28/08/2023;493\r\n108;BNU SUL/LES;28/08/2023;493\r\n100;REUNIDAS;29/08/2023;5219\r\n101;EXPRESSO;29/08/2023;6702\r\n109;ARARANGUÁ;29/08/2023;493\r\n110;SÃO JOSÉ;29/08/2023;493\r\n111;FPOLIS CENTRO;29/08/2023;493\r\n112;JLLE CEN/NOR;29/08/2023;493\r\n113;BNU NOR/OES;29/08/2023;493\r\n100;REUNIDAS;30/08/2023;5219\r\n101;EXPRESSO;30/08/2023;6702\r\n114;JARAGUÁ DO SUL;30/08/2023;5834\r\n115;SÃO JOSÉ;30/08/2023;493\r\n116;FPOLIS NORTE;30/08/2023;493\r\n117;PORTO BELO;30/08/2023;493\r\n118;BNU SUL/LES;30/08/2023;493\r\n100;REUNIDAS;31/08/2023;5219\r\n101;EXPRESSO;31/08/2023;6702\r\n119;BALNEÁRIO CAMBORIU;31/08/2023;5834\r\n120;ITAJAI;31/08/2023;5834\r\n121;FPOLIS CENTRO;31/08/2023;493\r\n122;FPOLIS SUL;31/08/2023;493\r\n123;RIO DO SUL;31/08/2023;493\r\n124;LITORAL NORTE;31/08/2023;493\r\n125;JLLE CEN/SUL;31/08/2023;493\r\n100;REUNIDAS;01/09/2023;5219\r\n101;EXPRESSO;01/09/2023;6702\r\n126;MAFRA;01/09/2023;493\r\n127;BRUSQUE GASPAR;01/09/2023;493\r\n128;BNU NOR/OES;01/09/2023;493\r\n129;CHAPECÓ;01/09/2023;493\r\n100;REUNIDAS;04/09/2023;5219;\r\n101;EXPRESSO;04/09/2023;6702;\r\n102;BALNEÁRIO CAMBORIU;04/09/2023;121493;\r\n103;ITAJAI;04/09/2023;121493;\r\n104;TIJUCAS;04/09/2023;493;\r\n105;TUBARAO;04/09/2023;493;\r\n106;FPOLIS CENTRO;04/09/2023;493;\r\n107;SÃO JOSÉ;04/09/2023;493;\r\n108;BNU SUL/LES;04/09/2023;493;\r\n109;ARARANGUÁ;04/09/2023;493;\r\n100;REUNIDAS;05/09/2023;5219;\r\n101;EXPRESSO;05/09/2023;6702;\r\n114;JARAGUÁ DO SUL;05/09/2023;121493;\r\n110;SÃO JOSÉ;05/09/2023;493;\r\n111;F.P. CENTRO;05/09/2023;493;\r\n112;JVILLE CEN/NOR;05/09/2023;493;\r\n113;BNU NOR/OES;05/09/2023;493;\r\n117;PORTO BELO;05/09/2023;493;\r\n100;REUNIDAS;06/09/2023;5219;\r\n101;EXPRESSO;06/09/2023;6702;\r\n118;BNU SUL/LES;06/09/2023;493;\r\n119;BALNEÁRIO CAMBORIU;06/09/2023;121493;\r\n120;ITAJAI;06/09/2023;121493;\r\n122;FPOLIS SUL;06/09/2023;493;\r\n116;FPOLIS NORTE;06/09/2023;493;\r\n123;RIO DO SUL;06/09/2023;493;\r\n124;LITORAL NORTE;06/09/2023;493;\r\n125;JVILLE CEN/SUL;06/09/2023;493;\r\n100;REUNIDAS;08/09/2023;5219;\r\n101;EXPRESSO;08/09/2023;6702;\r\n126;MAFRA;08/09/2023;493;\r\n127;BRUSQUE;08/09/2023;493;\r\n128;BLUMENAU;08/09/2023;493;\r\n129;CHAPECO;08/09/2023;493;\r\n130;LAGES;08/09/2023;493;
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+diff --git a/lib/arquivos/database/oc_semana1.txt b/lib/arquivos/database/oc_semana1.txt
+--- a/lib/arquivos/database/oc_semana1.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/lib/arquivos/database/oc_semana1.txt	(date 1693588443417)
+@@ -569,6 +569,79 @@
+ 127;BRUSQUE GASPAR;01/09/2023;493
+ 128;BNU NOR/OES;01/09/2023;493
+ 129;CHAPECÓ;01/09/2023;493
++100;REUNIDAS;04/09/2023;5219
++101;EXPRESSO;04/09/2023;6702
++102;BALNEÁRIO CAMBORIU;04/09/2023;121493
++103;ITAJAI;04/09/2023;121493
++104;TIJUCAS;04/09/2023;493
++105;TUBARAO;04/09/2023;493
++106;FPOLIS CENTRO;04/09/2023;493
++107;SÃO JOSÉ;04/09/2023;493
++108;BNU SUL/LES;04/09/2023;493
++109;ARARANGUÁ;04/09/2023;493
++100;REUNIDAS;05/09/2023;5219
++101;EXPRESSO;05/09/2023;6702
++114;JARAGUÁ DO SUL;05/09/2023;121493
++110;SÃO JOSÉ;05/09/2023;493
++111;FPOLIS CENTRO;05/09/2023;493
++112;JVILLE CEN/NOR;05/09/2023;493
++113;BNU NOR/OES;05/09/2023;493
++117;PORTO BELO;05/09/2023;493
++100;REUNIDAS;06/09/2023;5219
++101;EXPRESSO;06/09/2023;6702
++118;BNU SUL/LES;06/09/2023;493
++119;BALNEÁRIO CAMBORIU;06/09/2023;121493
++120;ITAJAI;06/09/2023;121493
++122;FPOLIS SUL;06/09/2023;493
++116;FPOLIS NORTE;06/09/2023;493
++123;RIO DO SUL;06/09/2023;493
++124;LITORAL NORTE;06/09/2023;493
++125;JVILLE CEN/SUL;06/09/2023;493
++100;REUNIDAS;08/09/2023;5219
++101;EXPRESSO;08/09/2023;6702
++126;MAFRA;08/09/2023;493
++127;BRUSQUE;08/09/2023;493
++128;BLUMENAU;08/09/2023;493
++129;CHAPECO;08/09/2023;493
++130;LAGES;08/09/2023;493
++100;REUNIDAS;28/08/2023;5219
++101;EXPRESSO;28/08/2023;6702
++102;BALNEÁRIO CAMBORIU;28/08/2023;5834
++103;ITAJAI;28/08/2023;5834
++104;TIJUCAS PALHOÇA;28/08/2023;493
++105;TUBARÃO;28/08/2023;493
++106;FPOLIS CENTRO;28/08/2023;493
++107;SÃO JOSÉ;28/08/2023;493
++108;BNU SUL/LES;28/08/2023;493
++100;REUNIDAS;29/08/2023;5219
++101;EXPRESSO;29/08/2023;6702
++109;ARARANGUÁ;29/08/2023;493
++110;SÃO JOSÉ;29/08/2023;493
++111;FPOLIS CENTRO;29/08/2023;493
++112;JLLE CEN/NOR;29/08/2023;493
++113;BNU NOR/OES;29/08/2023;493
++100;REUNIDAS;30/08/2023;5219
++101;EXPRESSO;30/08/2023;6702
++114;JARAGUÁ DO SUL;30/08/2023;5834
++115;SÃO JOSÉ;30/08/2023;493
++116;FPOLIS NORTE;30/08/2023;493
++117;PORTO BELO;30/08/2023;493
++118;BNU SUL/LES;30/08/2023;493
++100;REUNIDAS;31/08/2023;5219
++101;EXPRESSO;31/08/2023;6702
++119;BALNEÁRIO CAMBORIU;31/08/2023;5834
++120;ITAJAI;31/08/2023;5834
++121;FPOLIS CENTRO;31/08/2023;493
++122;FPOLIS SUL;31/08/2023;493
++123;RIO DO SUL;31/08/2023;493
++124;LITORAL NORTE;31/08/2023;493
++125;JLLE CEN/SUL;31/08/2023;493
++100;REUNIDAS;01/09/2023;5219
++101;EXPRESSO;01/09/2023;6702
++126;MAFRA;01/09/2023;493
++127;BRUSQUE GASPAR;01/09/2023;493
++128;BNU NOR/OES;01/09/2023;493
++129;CHAPECÓ;01/09/2023;493
+ 100;REUNIDAS;04/09/2023;5219;
+ 101;EXPRESSO;04/09/2023;6702;
+ 102;BALNEÁRIO CAMBORIU;04/09/2023;121493;
+Index: lib/arquivos/relatorio/fusion.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from reportlab.pdfgen import canvas\r\nfrom reportlab.lib.pagesizes import A4, landscape\r\nfrom time import sleep, strptime\r\nfrom lib.arquivos.ordemcarga import *\r\nfrom lib.arquivos.relatorios import pdftojpg\r\n\r\ndef mm(x):\r\n    return x / 0.352777\r\n\r\n\r\ndef controle(dados):\r\n\r\n    print('GERANDO RELATÓRIO CONTROLE DE QUILOMETRAGEM')\r\n    escala_df = dados\r\n    # excluir linhas das transportadoras expresso e reunidas\r\n    escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)\r\n\r\n    # gerar DataFrame\r\n    escala = escala_df[['Carga ERP', 'Destino', 'Veículo', 'Motorista', 'Ajudante 1', 'Ajudante 2', 'Data']]\r\n\r\n    # gerar relatorio\r\n    arqpdf = 'lib/arquivos/relatorio/programacao/controle_KM.pdf'\r\n    imagem = 'lib/arquivos/database/logo.jpg'\r\n    km = canvas.Canvas(arqpdf, pagesize=A4)\r\n    linha = len(escala.axes[0])\r\n\r\n    for cont in range(linha):\r\n        dado = escala.loc[cont]\r\n        if dado['Motorista'] != 'PAULO CESAR WIRTH':\r\n            print(f\"{dado['Carga ERP']}...ok\")\r\n            data = str(dado['Data'])\r\n            data = data[:-9]\r\n            km.setFont('Helvetica-Bold', 22)\r\n            km.drawCentredString(mm(40), mm(249), str(dado['Carga ERP']))\r\n            km.drawString(mm(70), mm(249), dado['Destino'])\r\n            km.drawString(mm(70), mm(238), data)\r\n            km.drawString(mm(70), mm(228), dado['Veículo'])\r\n            # km.drawString(mm(85), mm(228), dado[4])\r\n            km.drawString(mm(70), mm(218), dado['Motorista'])\r\n            km.drawImage(imagem, mm(16), mm(265), 99, 31)\r\n            km.setFont('Helvetica-Bold', 12)\r\n            km.drawString(mm(70), mm(267), 'CONTROLE DE QUILOMETRAGEM POR ORDEM DE CARGA')\r\n\r\n            km.setFont('Helvetica-Bold', 20)\r\n            km.rect(mm(16), mm(196), mm(180), mm(63))  # borda exterior\r\n            km.rect(mm(16), mm(246), mm(180), mm(13))  # linha 1\r\n            km.rect(mm(16), mm(236), mm(180), mm(10))  # linha 2\r\n            km.drawString(mm(19), mm(238), 'DATA SAIDA')\r\n            km.rect(mm(16), mm(226), mm(180), mm(10))  # linha 3\r\n            km.drawString(mm(19), mm(228), 'CARRO')\r\n            km.rect(mm(16), mm(216), mm(180), mm(10))  # linha 4\r\n            km.drawString(mm(19), mm(218), 'MOTORISTA')\r\n            km.rect(mm(16), mm(206), mm(180), mm(10))  # linha 5\r\n            km.drawString(mm(19), mm(208), 'KM INICIAL')\r\n            km.line(mm(68), mm(259), mm(68), mm(196))  # coluna\r\n            km.drawString(mm(19), mm(198), 'KM FINAL')\r\n            km.setFont('Helvetica-Bold', 12)\r\n            km.drawString(mm(17), mm(187), 'OCORRÊNCIAS')\r\n\r\n            lin = 135\r\n            # ocorrencias\r\n            for c in range(0, 3):\r\n                km.rect(mm(16), mm(lin), mm(180), mm(50))  # retangulo borda externa 50mm x 180mm\r\n                km.line(mm(16), (mm(lin) + mm(45)), mm(196),\r\n                        (mm(lin) + mm(45)))  # 1 linha ini +  linha col 16 ate col 196\r\n                km.line(mm(16), (mm(lin) + mm(35)), mm(196), (mm(lin) + mm(35)))  # 2 linha col 16 ate col 196\r\n                km.line(mm(16), (mm(lin) + mm(30)), mm(196), (mm(lin) + mm(30)))\r\n                km.line(mm(16), (mm(lin) + mm(20)), mm(196), (mm(lin) + mm(20)))\r\n                km.line(mm(16), (mm(lin) + mm(10)), mm(196), (mm(lin) + mm(10)))\r\n                km.line(mm(45), (mm(lin) + mm(50)), mm(45), mm(lin))\r\n                km.line(mm(155), (mm(lin) + mm(35)), mm(155), mm(lin))\r\n                km.line(mm(175), (mm(lin) + mm(35)), mm(175), mm(lin))\r\n                km.setFont('Helvetica-Bold', 10)\r\n                km.drawString(mm(18), (mm(lin) + mm(46)), 'NF')\r\n                km.drawString(mm(47), (mm(lin) + mm(46)), 'CLIENTE / CIDADE')\r\n                km.drawString(mm(18), (mm(lin) + mm(31)), 'QDADE')\r\n                km.drawCentredString(mm(95), (mm(lin) + mm(31)), 'PRODUTO')\r\n                km.drawString(mm(157), (mm(lin) + mm(31)), 'FALTA')\r\n                km.drawString(mm(177), (mm(lin) + mm(31)), 'AVARIA')\r\n                lin -= 57\r\n            # retangulo com oc e contagem\r\n            km.setFont('Helvetica-Bold', 18)\r\n            km.rect(mm(115), mm(5), mm(80), mm(10))\r\n            km.line(mm(155), mm(5), mm(155), mm(15))\r\n            km.drawString(mm(120), mm(7), \"OC \")  # informa\r\n            km.drawString(mm(135), mm(7), str(dado['Carga ERP']))\r\n            km.drawString(mm(160), mm(7), \"VOL\")\r\n            # quebra pagina\r\n            km.showPage()\r\n    km.save()\r\n    return arqpdf\r\n\r\n\r\ndef vistoria(dados):\r\n    escala_df = dados\r\n    # excluir linhas das transportadoras expresso e reunidas\r\n    escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)\r\n\r\n    # gerar DataFrame\r\n    escala = escala_df[['Carga ERP', 'Destino', 'Veículo', 'Motorista', 'Data']]\r\n\r\n    imagem = 'lib/arquivos/database/logo.jpg'\r\n    arqvis = 'lib/arquivos/relatorio/programacao/vistoria.pdf'\r\n    vis = canvas.Canvas(arqvis, pagesize=A4)\r\n\r\n    linha = len(escala.axes[0])\r\n    for cont in range(linha):\r\n        dado = escala.loc[cont]\r\n        print(f\"{dado['Carga ERP']}...ok\")\r\n        data = str(dado['Data'])\r\n        data = data[:-9]\r\n        vis.setFont('Helvetica-Bold', 12)\r\n        vis.drawString(mm(38), mm(257), dado['Destino'])\r\n        vis.drawString(mm(157), mm(257), 'AGROSUL')\r\n        vis.drawString(mm(38), mm(248), str(dado['Carga ERP']))\r\n        vis.drawString(mm(157), mm(248), '47-3330-5747')\r\n        vis.drawString(mm(38), mm(239), data)\r\n        vis.drawString(mm(38), mm(230), dado['Veículo'])\r\n        vis.setFont('Helvetica-Bold', 8)\r\n        vis.drawString(mm(157), mm(230), dado['Motorista'])\r\n\r\n        ##### CONTRUÇÃO DO RELATORIO #####\r\n\r\n        # cabeçalho\r\n\r\n        vis.drawImage(imagem, mm(10), mm(275), 99, 31)\r\n        vis.drawString(mm(83), mm(278), 'ORDEM DE CARREGAMENTO')\r\n        vis.setLineWidth(0.2)\r\n        vis.line(mm(2), mm(268), mm(205), mm(268))\r\n\r\n        # primeiro bloco - dados do roteiro (oc, veiculo, motorista)\r\n        vis.setFont('Helvetica-Bold', 10)\r\n        vis.rect(mm(35), mm(255), mm(50), mm(7))\r\n        vis.drawString(mm(5), mm(257), 'Destino')\r\n        vis.rect(mm(35), mm(246), mm(50), mm(7))\r\n        vis.drawString(mm(5), mm(248), 'Ordem/Rota')\r\n        vis.rect(mm(35), mm(237), mm(50), mm(7))\r\n        vis.drawString(mm(5), mm(239), 'Data Expedição')\r\n        vis.rect(mm(35), mm(228), mm(50), mm(7))\r\n        vis.drawString(mm(5), mm(230), 'Placa Veiculo')\r\n        vis.rect(mm(155), mm(255), mm(50), mm(7))\r\n        vis.drawString(mm(125), mm(257), 'Transportadora')\r\n        vis.rect(mm(155), mm(246), mm(50), mm(7))\r\n        vis.drawString(mm(125), mm(248), 'Contato')\r\n        vis.rect(mm(155), mm(228), mm(50), mm(7))\r\n        vis.drawString(mm(125), mm(230), 'Motorista')\r\n\r\n        # segundo bloco - avaliação de segurança e meio ambiente\r\n        vis.setFillColorRGB(0.7, 0.7, 0.7)\r\n        vis.rect(mm(5), mm(218), mm(200), mm(6), fill=1)\r\n        vis.setFillColorRGB(0, 0, 0)\r\n        vis.setFont('Helvetica-Bold', 8)\r\n        vis.drawString(mm(50), mm(220), 'Avaliação de Segurança e Meio Ambiente')\r\n        vis.drawString(mm(146), mm(220), 'C    NC    NA       Observação/Medidas')\r\n\r\n        lin = 209\r\n        topicoSeg = [\r\n            'Os pneus não devem apresentar desgaste excessivo, trincos, ressolagem solta e avarias?',\r\n            'Farois,lanternas e setas estão funcionando?',\r\n            'Para-brisa e vidros laterais estão ausentes de tricos?',\r\n            'Ausência de vasamento de óleo ou graxa?',\r\n            'Conhecimento das normas de segurança e meio ambiente?',\r\n            'Luz de ré funcionando?',\r\n            'Luz de freio funcionando?'\r\n        ]\r\n        for i in range(0, 6):\r\n            vis.rect(mm(5), mm(lin), mm(200), mm(6), fill=0)\r\n            vis.line(mm(145), mm(lin), mm(145), mm(lin + 6))\r\n            vis.drawString(mm(6), mm(lin + 1), topicoSeg[i])\r\n            vis.drawString(mm(147), mm(lin + 2), 'x')\r\n            vis.line(mm(151), mm(lin), mm(151), mm(lin + 6))\r\n            vis.line(mm(157), mm(lin), mm(157), mm(lin + 6))\r\n            vis.line(mm(163), mm(lin), mm(163), mm(lin + 6))\r\n            lin -= 6\r\n\r\n        # terceiro bloco - Avaliação qualiodade e Bug Out\r\n\r\n        vis.setFillColorRGB(0.7, 0.7, 0.7)\r\n        vis.rect(mm(5), mm(170), mm(200), mm(6), fill=1)\r\n        vis.setFillColorRGB(0, 0, 0)\r\n        vis.setFont('Helvetica-Bold', 8)\r\n        vis.drawString(mm(50), mm(172), 'Avaliação de Qualidade e Bug Out')\r\n        vis.drawString(mm(146), mm(172), 'C    NC    NA       Observação/Medidas')\r\n\r\n        topicoQual = [\r\n            'Integridade do Baú?',\r\n            'Interior do Baú limpo?',\r\n            'Constatação de pragas?',\r\n            'Durante o embarque/desembarque foi constatado algum vestigio de praga?',\r\n            'Assoalho forrado com placas de papelão?',\r\n            'Placas de papelão sem vestigio de pragas?',\r\n            'Paletes de madeira sem vestigio de pragas?',\r\n            'Motorista uniformizado e com EPI?'\r\n        ]\r\n\r\n        lin = 161\r\n        for i in range(0, 8):\r\n            vis.rect(mm(5), mm(lin), mm(200), mm(6), fill=0)\r\n            vis.line(mm(145), mm(lin), mm(145), mm(lin + 6))\r\n            vis.drawString(mm(6), mm(lin + 1), topicoQual[i])\r\n            vis.drawString(mm(147), mm(lin + 2), 'x')\r\n            vis.line(mm(151), mm(lin), mm(151), mm(lin + 6))\r\n            vis.line(mm(157), mm(lin), mm(157), mm(lin + 6))\r\n            vis.line(mm(163), mm(lin), mm(163), mm(lin + 6))\r\n            lin -= 6\r\n\r\n        # quarto bloco -\r\n\r\n        vis.rect(mm(5), mm(110), mm(200), mm(6))\r\n        vis.setFillColorRGB(0, 0, 0)\r\n        vis.setFont('Helvetica-Bold', 8)\r\n        vis.drawString(mm(7), mm(112), 'Portas com cadeados -')\r\n\r\n        lin = 100\r\n        vis.setFont('Helvetica', 7)\r\n        vis.drawString(mm(5), mm(101), 'Tratativa (Observação/Medidas):')\r\n        for i in range(0, 5):\r\n            vis.line(mm(5), mm(lin), mm(205), mm(lin))\r\n            lin -= 4\r\n\r\n        # vis.drawString(mm(5), mm(75), 'Data: _______/_______/________')\r\n        vis.drawString(mm(110), mm(75), 'Expedidor: __________________________________________')\r\n        vis.drawString(mm(125), mm(76), ' AGROSUL')\r\n        # vis.drawString(mm(5), mm(70), 'Hora: _________________')\r\n        vis.drawString(mm(110), mm(65), 'Responsável pela verificação: _______________________')\r\n        vis.drawString(mm(110), mm(55), 'Motorista: __________________________________________')\r\n        vis.drawString(mm(125), mm(56), dado['Motorista'])\r\n        vis.setFont('Helvetica-Bold', 6)\r\n        vis.drawString(mm(110), mm(45), 'C: Significa \"CONFORME\", ou seja, o equipamento está em condições de uso')\r\n        vis.drawString(mm(110), mm(40),\r\n                       'NC: Signfica \"NÃO CONFORME\", ou seja, o equipamento não está em condiçõers de uso')\r\n        vis.drawString(mm(110), mm(35),\r\n                       'NA: Significa \"NÃO APLICÁVEL\",ou seja, o item não atende mais a realidade do equipamento')\r\n        vis.line(mm(2), mm(30), mm(205), mm(30))\r\n        vis.drawString(mm(5), mm(25), 'Senhores motoristas:')\r\n        vis.drawString(mm(5), mm(20),\r\n                       'Operador lhe informará o peso total da carga e a quantidade de paletes de sacos e caixas, '\r\n                       'onde os Srs lhe dizerão a devida disponibilidade dos paletes no veiculo,')\r\n        vis.drawString(mm(5), mm(15),\r\n                       'uma vez que se responsabiliza pela carga, após a saída do veiculo da Royal Canin do Brasil')\r\n\r\n        vis.showPage()\r\n\r\n    vis.save()\r\n    return arqvis\r\n\r\n\r\ndef escalacao(dados):\r\n    escala_df = dados\r\n    # excluir linhas das transportadoras expresso e reunidas\r\n    escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)\r\n\r\n    # gerar DataFrame\r\n    escala = escala_df[['Carga ERP', 'Destino', 'Veículo', 'Motorista', 'Ajudante 1', 'Ajudante 2']]\r\n\r\n    linha = len(escala.axes[0])  # contar quantas rotas tem na programação,\r\n    arquivo = 'lib/arquivos/relatorio/programacao/escalacao.pdf'\r\n\r\n    # gerar cabecalho da escalação\r\n    alt = 35 + (linha * 20)\r\n    div = canvas.Canvas(arquivo, pagesize=(mm(260), mm(alt)))\r\n    div.setFillColorRGB(0, 0.5, 0.8)  # cor RGB azul escuro\r\n    div.rect(mm(5), mm(alt - 30), mm(250), mm(15), fill=1)  # retangulo fundo azul escuro\r\n    div.setLineWidth(1.5)  # espessura da linha\r\n    div.setFont('Helvetica-Bold', 25)  # fonte e tamanho\r\n    div.setFillColorRGB(0, 0, 0)\r\n    div.drawCentredString(mm(130), mm(alt - 9), 'PROGRAMAÇÃO DE VIAGEM')\r\n    div.line(mm(5), mm(alt - 15), mm(255), mm(alt - 15))  # primeira linha\r\n    div.line(mm(5), mm(alt - 30), mm(5), mm(alt - 15))  # primeira coluna\r\n    div.line(mm(90), mm(alt - 30), mm(90), mm(alt - 15))  # segunda coluna\r\n    div.line(mm(140), mm(alt - 30), mm(140), mm(alt - 15))  # terceira coluna\r\n    div.line(mm(255), mm(alt - 30), mm(255), mm(alt - 15))  # quarta coluna\r\n    div.line(mm(5), mm(alt - 30), mm(255), mm(alt - 30))  # segunda linha\r\n    div.setFillColorRGB(255, 255, 255)  # cor que o proximo texto vai assumir - branco\r\n    div.drawCentredString(mm(45), mm(alt - 25), 'ROTEIRO')\r\n    div.drawCentredString(mm(115), mm(alt - 25), 'CARRO')\r\n    div.drawCentredString(mm(197), mm(alt - 25), 'COLABORADORES')\r\n\r\n    # gerar bloco com a escalação dos roteiros e colaboradores\r\n    linSup = alt - 30\r\n    linInf = alt - 50\r\n    tex = alt - 42\r\n    for cont in range(linha):\r\n        dado = escala.loc[cont]\r\n        ajudante1 = str(dado['Ajudante 1'])\r\n        ajudante2 = str(dado['Ajudante 2'])\r\n        div.setFont('Helvetica-Bold', 20)\r\n        div.setFillColorRGB(0, 1, 1)\r\n        div.rect(mm(5), mm(linInf), mm(250), mm(20), fill=1)\r\n        div.setFillColorRGB(0, 0, 0)\r\n        div.line(mm(5), mm(linSup), mm(5), mm(linInf))  # coluna\r\n        div.line(mm(90), mm(linSup), mm(90), mm(linInf))  # coluna\r\n        div.line(mm(140), mm(linSup), mm(140), mm(linInf))  # coluna\r\n        div.line(mm(255), mm(linSup), mm(255), mm(linInf))  # coluna\r\n        div.line(mm(5), mm(linInf), mm(255), mm(linInf))  # linha inferior\r\n        div.drawString(mm(7), mm(tex), dado['Destino'])\r\n        div.drawCentredString(mm(115), mm(tex), dado['Veículo'])\r\n        div.setFont('Helvetica-Bold', 18)\r\n        if ajudante2 != 'nan':\r\n            div.drawString(mm(143), mm(tex + 6), dado['Motorista'])\r\n            div.drawString(mm(143), mm(tex - 0.5), ajudante1)\r\n            div.drawString(mm(143), mm(tex - 7), ajudante2)\r\n        elif ajudante1 == 'nan':\r\n            div.drawString(mm(143), mm(tex), dado['Motorista'])\r\n        else:\r\n            div.drawString(mm(143), mm(tex + 4), dado['Motorista'])\r\n            div.drawString(mm(143), mm(tex - 6), ajudante1)\r\n        print(f\"OC {dado['Carga ERP']} ..... ok!\")\r\n        sleep(0.5)\r\n        linSup -= 20\r\n        linInf -= 20\r\n        tex -= 20\r\n    div.save()\r\n    destinoimagem = 'lib/arquivos/relatorio/programacao'\r\n    imagem = pdftojpg(arquivo, destinoimagem)\r\n    return imagem\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/arquivos/relatorio/fusion.py b/lib/arquivos/relatorio/fusion.py
+--- a/lib/arquivos/relatorio/fusion.py	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/lib/arquivos/relatorio/fusion.py	(date 1705761913330)
+@@ -4,10 +4,10 @@
+ from lib.arquivos.ordemcarga import *
+ from lib.arquivos.relatorios import pdftojpg
+ 
++
+ def mm(x):
+     return x / 0.352777
+ 
+-
+ def controle(dados):
+ 
+     print('GERANDO RELATÓRIO CONTROLE DE QUILOMETRAGEM')
+@@ -248,12 +248,12 @@
+ def escalacao(dados):
+     escala_df = dados
+     # excluir linhas das transportadoras expresso e reunidas
+-    escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)
++    #escala_df = escala_df.drop(escala_df[escala_df['Motorista'] == 'MOTORISTA TRANSPORTADORA'].index)
+ 
+     # gerar DataFrame
+     escala = escala_df[['Carga ERP', 'Destino', 'Veículo', 'Motorista', 'Ajudante 1', 'Ajudante 2']]
+-
+-    linha = len(escala.axes[0])  # contar quantas rotas tem na programação,
++    transp = 
++    linha = len(escala.axes[0]) -   # contar quantas rotas tem na programação,
+     arquivo = 'lib/arquivos/relatorio/programacao/escalacao.pdf'
+ 
+     # gerar cabecalho da escalação
+Index: lib/arquivos/ordemcarga.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from lib.arquivos import relatorios\r\n#from lib.arquivos.relatorios import *\r\nfrom lib.interface.valida import *\r\nfrom lib.interface.layout import *\r\nfrom time import sleep\r\nfrom datetime import timedelta, date\r\nimport os\r\n\r\n\r\ndef arqExiste(arquivo):\r\n    '''\r\n    => Verifica se o existencia do arquivo a ser manipulado\r\n    :param arquivo: nome do arquivo\r\n    :return: retorna False se o arquivo não for encontrado\r\n             retorna True se o arquivo for encontrado\r\n    '''\r\n    try:\r\n        a = open(arquivo, 'rt')\r\n        a.close()\r\n    except FileNotFoundError:\r\n        return False\r\n    else:\r\n        return True\r\n\r\n\r\ndef criarArquivo(arquivo):\r\n    '''\r\n    => Cria um arquivo de texto\r\n    :param arquivo: nome do arquivo\r\n    :return:\r\n    '''\r\n    try:\r\n        a = open(arquivo, 'wt+')\r\n        a.close()\r\n    except:\r\n        print(f'{cor(3)}Houve um Erro na criação do arquivo!{cor(0)}')\r\n    else:\r\n        print(f'Arquivo {cor(9)}{arquivo} {cor(0)}criado com sucesso!')\r\n\r\n\r\ndef importaOC(arq_ori, arq_des):\r\n\r\n    cabecalho('-', 'IMPORTAÇÃO DE ORDENS DE CARGA SEMANAL')\r\n    try:\r\n        ori = open(arq_ori, 'r')\r\n    except:\r\n        print(f'{cor(3)}Ops! problemas em abrir arquivo de origem{cor(0)}')\r\n    else:\r\n        print(f'Arquivo {cor(7)}{arq_ori} {cor(0)}localizado com sucesso! ')\r\n        try:\r\n            des = open(arq_des, 'r')\r\n        except:\r\n            print(f'{cor(3)}Ops! problemas em abrir arquivo de destino{cor(0)}')\r\n        else:\r\n            print(f'Arquivo{cor(7)} {arq_des} {cor(0)}localizado com sucesso!')\r\n            cont = 0\r\n            data_ini = data_fim = ''\r\n            for novo in ori:\r\n                oc_ori = novo.split(';')\r\n                with open(arq_des, 'at') as des:\r\n                    try:\r\n                        des.write(f'{oc_ori[0]};{oc_ori[1]};{oc_ori[2]};{oc_ori[3]}')\r\n                    except:\r\n                        print(f'{cor(3)}Ops! problemas em gravar novo registro{cor(0)}')\r\n                    else:\r\n                        print(f'{cor(5)}Gravando registro....{cor(0)}')\r\n                        #sleep(0.25)\r\n                        print(f'{cor(7)}{oc_ori[0]} registrado com sucesso!{cor(0)}')\r\n                        cont += 1\r\n                        if cont == 1:\r\n                            data_ini = datetime.strptime(oc_ori[2], '%d/%m/%Y')\r\n\r\n                        else:\r\n                            data_fim = datetime.strptime(oc_ori[2], '%d/%m/%Y')\r\n\r\n        relatorios.geraListagemRoteiro(arq_des, data_ini, data_fim)\r\n        relatorios.oc_periodo(arq_des, data_ini, data_fim)\r\n    try:\r\n        ori.close()\r\n    except:\r\n        print(f'{cor(9)}Foram registrados {cont} Ordens de Carga{cor(0)}')\r\n    finally:\r\n        print(f'{cor(9)}Foram registrados {cont} Ordens de Carga{cor(0)}')\r\n\r\n        des.close()\r\n\r\n\r\ndef incluiOC(arquivo):\r\n    cabecalho('-', 'INCLUSÃO DE ORDEM DE CARGA')\r\n\r\n    while True:\r\n        with open(arquivo, 'r') as arq:\r\n            for reg in arq:\r\n                ultimo_reg = reg.split(';')\r\n                ultimo_oc = ultimo_reg[0]\r\n        arq = open(arquivo, 'at')\r\n        oc = int(ultimo_oc) + 1\r\n        print(f'OC......: {oc}')\r\n        roteiro = str(input('ROTEIRO.: ')).upper()\r\n        data = leiaData('DATA....: ')\r\n        data = datetime.strftime(data, '%d/%m/%Y')\r\n        transp = leiaInt('TRANSPORTADORA: ')\r\n        while True:\r\n            resp = str(input('CONFIRMA [S/N]: ')).upper()\r\n            if resp == 'S' or resp =='N':\r\n                break\r\n            else:\r\n                print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n        if resp == 'S':\r\n            try:\r\n                arq.write(f'{oc};{roteiro};{data};{transp}\\n')\r\n            except:\r\n                print(f'Ops! problemas em gravar dados')\r\n            else:\r\n                print(f'{cor(7)}OC {oc} {cor(1)}cadastrado com sucesso!{cor(0)}')\r\n            linha('-', 40, 1)\r\n        while True:\r\n            resp = str(input('DESEJA CONTINUAR [S/N]: ')).upper()\r\n            if resp == 'S' or resp =='N':\r\n                break\r\n            else:\r\n                print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n        linha('-', 40, 1)\r\n        if resp == 'N':\r\n            break\r\n    arq.close()\r\n\r\n\r\ndef progDia(arq_hj, arq_geral, data='hoje'):\r\n    cabecalho('-', 'PROGRAMAÇÃO DE HOJE')\r\n    if not arqExiste(arq_hj):\r\n        print(f'arquivo {arq_hj} não existe . . . criando arquivo!')\r\n        sleep(0.5)\r\n        criarArquivo(arq_hj)\r\n\r\n        with open(arq_geral, 'r') as ori:\r\n            for reg in ori:\r\n                dados = reg.split(';')\r\n                dados[3] = dados[3].replace('\\n', '')\r\n                if dados[2] == data and dados[3] == '493':\r\n                    while True:\r\n                        print(f'{cor(1)}{dados[0]} - {dados[1]}{cor(0)} ')\r\n                        carro = leiaCar('Codigo do veiculo: ')\r\n                        motorista = leiaCol('Codigo do motorista: ')\r\n                        ajudante = leiaCol('Codigo do ajudante: ')\r\n\r\n                        while True:\r\n                            resp = str(input('Confirma [S/N]? ')).upper()\r\n                            if resp == 'S' or resp == 'N':\r\n                                break\r\n                            else:\r\n                                print(f'{cor(3)}Opçãp inválida{cor(0)}')\r\n                        if resp == 'S':\r\n                            des = open(arq_hj, 'at')\r\n                            des.write(f'{dados[0]};{dados[1]};{carro[0]};{carro[1]};{carro[2]};{motorista};{ajudante};'\r\n                                      f'{carro[3]};{data}\\n')\r\n                            des.close()\r\n                            linha('-', 25)\r\n                            break\r\n\r\n        des = open(arq_hj, 'r')\r\n        existe = des.read()\r\n        des.close()\r\n\r\n        if len(existe) == 0:\r\n            print('ERRO... NÃO HÁ ORDENS DE CARGA')\r\n            os.remove(arq_hj)\r\n        else:\r\n            relatorios.controleKM(arq_hj, data)\r\n            relatorios.vistoria(arq_hj,data)\r\n\r\n    else:\r\n        print('PROGRAMAÇÃO JÁ FEITA')\r\n        hoje = date.today().strftime('%d-%m-%y')\r\n        diretorio = os.getcwd().replace('\\\\', '/') + '/'\r\n        div = f'lib/arquivos/relatorio/programacao/prog {hoje}.jpg'\r\n\r\n        while True:\r\n            resp = str(input('ESCOLHA SUA OPÇÃO: [V] VISUALIZAR [A] APAGAR ')).upper()\r\n            if resp in 'VA':\r\n                break\r\n            else:\r\n                print('ERRO! opção incorreta, tente novamente')\r\n        if resp == 'V':\r\n            if arqExiste(diretorio + div):\r\n                os.startfile(diretorio + div)\r\n            else:\r\n                print('ERRO! imagem de divulgação não gerada.... utilize a opção [2] Divulga')\r\n        else:\r\n            print('Apagando programação...')\r\n            sleep(2)\r\n            try:\r\n                os.remove(diretorio + arq_hj)\r\n            except FileNotFoundError as erro:\r\n                print(f'ERRO - {erro}  ')\r\n            try:\r\n                os.remove(diretorio + div)\r\n            except FileNotFoundError as erro:\r\n                print(f'Erro! - {erro}')\r\n            print('PROGRAMAÇÃO APAGADA!')\r\n\r\n    linha('-', 42)\r\n\r\n\r\n\r\n\r\ndef geraOC(arq):\r\n    '''\r\n\r\n    :param arq:\r\n    :return:\r\n    '''\r\n\r\n    matriz = (\r\n            'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI','TIJUCAS PALHOÇA', 'TUBARÃO', 'FPOLIS CENTRO',\r\n            'SÃO JOSÉ', 'BNU SUL/LES', 'REUNIDAS', 'EXPRESSO', 'ARARANGUÁ', 'SÃO JOSÉ',\r\n            'FPOLIS CENTRO','JLLE CEN/NOR','BNU NOR/OES', 'REUNIDAS', 'EXPRESSO', 'JARAGUÁ DO SUL', 'SÃO JOSÉ',\r\n            'FPOLIS NORTE', 'PORTO BELO', 'BNU SUL/LES', 'REUNIDAS', 'EXPRESSO', 'BALNEÁRIO CAMBORIU', 'ITAJAI',\r\n            'FPOLIS CENTRO', 'FPOLIS SUL', 'RIO DO SUL', 'LITORAL NORTE', 'JLLE CEN/SUL', 'REUNIDAS', 'EXPRESSO',\r\n            'MAFRA', 'BRUSQUE GASPAR', 'BNU NOR/OES', 'CHAPECÓ', 'LAGES'\r\n            )\r\n    # PEGAR O ULTIMO REGISTRO DO ARQUIVO DE DADOS E USAR COMO PARAMETRO INICIAL\r\n    with open(arq, 'r') as origem:\r\n        for reg in origem:\r\n            ultimo = reg.split(';')\r\n            data = datetime.strptime(ultimo[2], '%d/%m/%Y')\r\n            data_ini = data + timedelta(days=1)\r\n            data_ult = data_ini\r\n            while True:\r\n                semana = diaSemana(data_ini)\r\n                if semana == 'SEGUNDA':\r\n                    break\r\n                else:\r\n                    data_ini = data_ini + timedelta(days=1)\r\n    # VALIDAR DATAS E ROTAS\r\n        while True:\r\n            resp = str(input('DESEJA INCLUIR LAGES NO ROTEIRO [S/N]: ')).upper()\r\n            if resp == 'S' or resp == 'N':\r\n                break\r\n            else:\r\n                print(f'{cor (3)}Opçãp inválida{cor (0)}')\r\n        linha('-', 80, 1)\r\n        cont = 0\r\n        oc = 101\r\n        for item, valor in enumerate(matriz):\r\n\r\n            cont += 1\r\n            if valor == 'REUNIDAS':\r\n                if cont == 1:\r\n                    data_ult = data_ini\r\n                    semana = diaSemana(data_ult)\r\n                else:\r\n                    data_ult = datetime.strptime(data_ult, '%d/%m/%Y')\r\n                    data_ult = data_ult + timedelta(days=1)\r\n                    semana = diaSemana(data_ult)\r\n                data_ult = datetime.strftime(data_ult, '%d/%m/%Y')\r\n                transp = '5219'\r\n                oct = 100\r\n                linha('-', )\r\n                print(f'{cor(13)}{data_ult} - {semana}{cor(0)}')\r\n\r\n            elif valor == 'EXPRESSO':\r\n                transp = '6702'\r\n                oct = 101\r\n\r\n            elif ('BALNEÁRIO' in valor) or ('ITAJAI' in valor) or ('JARAGUÁ' in valor):\r\n                transp = '5834'\r\n            else:\r\n                transp = '493'\r\n            if valor != 'LAGES' or (valor == 'LAGES' and resp == 'S'):\r\n                try:\r\n                    origem = open(arq, 'at')\r\n                    if valor == 'REUNIDAS' or valor == 'EXPRESSO':\r\n                        origem.write(f'{oct};{valor};{data_ult};{transp}\\n')\r\n                        origem.close()\r\n\r\n                    else:\r\n                        oc += 1\r\n                        origem.write(f'{oc};{valor};{data_ult};{transp}\\n')\r\n                        origem.close()\r\n                except:\r\n                    print(f'Ops! problemas em gravar dados')\r\n                else:\r\n                    print(f'{cor (7)}OC {oc} - {valor} {cor (1)}cadastrado com sucesso!{cor (0)}')\r\n\r\n            else:\r\n                oc -= 1\r\n\r\n        data_ult = datetime.strptime(data_ult, '%d/%m/%Y')\r\n        relatorios.geraListagemRoteiro(arq, data_ini, data_ult)\r\n        relatorios.oc_periodo(arq, data_ini, data_ult)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/arquivos/ordemcarga.py b/lib/arquivos/ordemcarga.py
+--- a/lib/arquivos/ordemcarga.py	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/lib/arquivos/ordemcarga.py	(date 1693588443276)
+@@ -1,5 +1,5 @@
+ from lib.arquivos import relatorios
+-#from lib.arquivos.relatorios import *
++from lib.arquivos.relatorios import *
+ from lib.interface.valida import *
+ from lib.interface.layout import *
+ from time import sleep
+Index: lib/arquivos/relatorio/programacao/periodo 05-06-2023 a 09-06-2023.txt
+===================================================================
+diff --git a/lib/arquivos/relatorio/programacao/periodo 05-06-2023 a 09-06-2023.txt b/lib/arquivos/relatorio/programacao/periodo 05-06-2023 a 09-06-2023.txt
+deleted file mode 100644
+--- a/lib/arquivos/relatorio/programacao/periodo 05-06-2023 a 09-06-2023.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ /dev/null	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
+@@ -1,40 +0,0 @@
+-05/06/2023 a 09/06/2023
+-+-----------+-------------------------------+--------------+
+-|     OC    |           ROTEIRO             |     DATA     |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  05/06/2023  |
+-|    101    | EXPRESSO                      |  05/06/2023  |
+-|    102    | BALNE�RIO CAMBORIU            |  05/06/2023  |
+-|    103    | ITAJAI                        |  05/06/2023  |
+-|    104    | TIJUCAS                       |  05/06/2023  |
+-|    105    | TUBAR�O                       |  05/06/2023  |
+-|    106    | FPOLIS CENTRO                 |  05/06/2023  |
+-|    107    | S�O JOS�                      |  05/06/2023  |
+-|    108    | BNU SUL/LES                   |  05/06/2023  |
+-|    109    | ARARANGU�                     |  05/06/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  06/06/2023  |
+-|    101    | EXPRESSO                      |  06/06/2023  |
+-|    110    | S�O JOS�                      |  06/06/2023  |
+-|    111    | FPOLIS CENTRO                 |  06/06/2023  |
+-|    112    | JOINVILLE                     |  06/06/2023  |
+-|    113    | BNU NOR/OES                   |  06/06/2023  |
+-|    114    | JARAGU� DO SUL                |  06/06/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  07/06/2023  |
+-|    101    | EXPRESSO                      |  07/06/2023  |
+-|    116    | FPOLIS NORTE                  |  07/06/2023  |
+-|    117    | PORTO BELO                    |  07/06/2023  |
+-|    119    | BALNEARIO CAMBORIU            |  07/06/2023  |
+-|    120    | ITAJAI                        |  07/06/2023  |
+-|    122    | FPOLIS SUL                    |  07/06/2023  |
+-|    123    | RIO DO SUL                    |  07/06/2023  |
+-|    124    | LITORAL NORTE                 |  07/06/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  09/06/2023  |
+-|    101    | EXPRESSO                      |  09/06/2023  |
+-|    126    | MAFRA                         |  09/06/2023  |
+-|    127    | BRUSQUE                       |  09/06/2023  |
+-|    128    | BLUMENAU                      |  09/06/2023  |
+-|    129    | CHAPEC�                       |  09/06/2023  |
+-+-----------+-------------------------------+--------------+
+\ No newline at end of file
+Index: lib/arquivos/relatorio/programacao/periodo 31-07-2023 a 04-08-2023.txt
+===================================================================
+diff --git a/lib/arquivos/relatorio/programacao/periodo 31-07-2023 a 04-08-2023.txt b/lib/arquivos/relatorio/programacao/periodo 31-07-2023 a 04-08-2023.txt
+deleted file mode 100644
+--- a/lib/arquivos/relatorio/programacao/periodo 31-07-2023 a 04-08-2023.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ /dev/null	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
+@@ -1,47 +0,0 @@
+-31/07/2023 a 04/08/2023
+-+-----------+-------------------------------+--------------+
+-|     OC    |           ROTEIRO             |     DATA     |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  31/07/2023  |
+-|    101    | EXPRESSO                      |  31/07/2023  |
+-|    102    | BALNE�RIO CAMBORIU            |  31/07/2023  |
+-|    103    | ITAJAI                        |  31/07/2023  |
+-|    104    | TIJUCAS PALHO�A               |  31/07/2023  |
+-|    105    | TUBAR�O                       |  31/07/2023  |
+-|    106    | FPOLIS CENTRO                 |  31/07/2023  |
+-|    107    | S�O JOS�                      |  31/07/2023  |
+-|    108    | BNU SUL/LES                   |  31/07/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  01/08/2023  |
+-|    101    | EXPRESSO                      |  01/08/2023  |
+-|    109    | ARARANGU�                     |  01/08/2023  |
+-|    110    | S�O JOS�                      |  01/08/2023  |
+-|    111    | FPOLIS CENTRO                 |  01/08/2023  |
+-|    112    | JLLE CEN/NOR                  |  01/08/2023  |
+-|    113    | BNU NOR/OES                   |  01/08/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  02/08/2023  |
+-|    101    | EXPRESSO                      |  02/08/2023  |
+-|    114    | JARAGU� DO SUL                |  02/08/2023  |
+-|    115    | S�O JOS�                      |  02/08/2023  |
+-|    116    | FPOLIS NORTE                  |  02/08/2023  |
+-|    117    | PORTO BELO                    |  02/08/2023  |
+-|    118    | BNU SUL/LES                   |  02/08/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  03/08/2023  |
+-|    101    | EXPRESSO                      |  03/08/2023  |
+-|    119    | BALNE�RIO CAMBORIU            |  03/08/2023  |
+-|    120    | ITAJAI                        |  03/08/2023  |
+-|    121    | FPOLIS CENTRO                 |  03/08/2023  |
+-|    122    | FPOLIS SUL                    |  03/08/2023  |
+-|    123    | RIO DO SUL                    |  03/08/2023  |
+-|    124    | LITORAL NORTE                 |  03/08/2023  |
+-|    125    | JLLE CEN/SUL                  |  03/08/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  04/08/2023  |
+-|    101    | EXPRESSO                      |  04/08/2023  |
+-|    126    | MAFRA                         |  04/08/2023  |
+-|    127    | BRUSQUE GASPAR                |  04/08/2023  |
+-|    128    | BNU NOR/OES                   |  04/08/2023  |
+-|    129    | CHAPEC�                       |  04/08/2023  |
+-+-----------+-------------------------------+--------------+
+\ No newline at end of file
+Index: lib/arquivos/relatorio/programacao/periodo 29-05-2023 a 02-06-2023.txt
+===================================================================
+diff --git a/lib/arquivos/relatorio/programacao/periodo 29-05-2023 a 02-06-2023.txt b/lib/arquivos/relatorio/programacao/periodo 29-05-2023 a 02-06-2023.txt
+deleted file mode 100644
+--- a/lib/arquivos/relatorio/programacao/periodo 29-05-2023 a 02-06-2023.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ /dev/null	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
+@@ -1,48 +0,0 @@
+-29/05/2023 a 02/06/2023
+-+-----------+-------------------------------+--------------+
+-|     OC    |           ROTEIRO             |     DATA     |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  29/05/2023  |
+-|    101    | EXPRESSO                      |  29/05/2023  |
+-|    102    | BALNE�RIO CAMBORIU            |  29/05/2023  |
+-|    103    | ITAJAI                        |  29/05/2023  |
+-|    104    | TIJUCAS PALHO�A               |  29/05/2023  |
+-|    105    | TUBAR�O                       |  29/05/2023  |
+-|    106    | FPOLIS CENTRO                 |  29/05/2023  |
+-|    107    | S�O JOS�                      |  29/05/2023  |
+-|    108    | BNU SUL/LES                   |  29/05/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  30/05/2023  |
+-|    101    | EXPRESSO                      |  30/05/2023  |
+-|    109    | ARARANGU�                     |  30/05/2023  |
+-|    110    | S�O JOS�                      |  30/05/2023  |
+-|    111    | FPOLIS CENTRO                 |  30/05/2023  |
+-|    112    | JLLE CEN/NOR                  |  30/05/2023  |
+-|    113    | BNU NOR/OES                   |  30/05/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  31/05/2023  |
+-|    101    | EXPRESSO                      |  31/05/2023  |
+-|    114    | JARAGU� DO SUL                |  31/05/2023  |
+-|    115    | S�O JOS�                      |  31/05/2023  |
+-|    116    | FPOLIS NORTE                  |  31/05/2023  |
+-|    117    | PORTO BELO                    |  31/05/2023  |
+-|    118    | BNU SUL/LES                   |  31/05/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  01/06/2023  |
+-|    101    | EXPRESSO                      |  01/06/2023  |
+-|    119    | BALNE�RIO CAMBORIU            |  01/06/2023  |
+-|    120    | ITAJAI                        |  01/06/2023  |
+-|    121    | FPOLIS CENTRO                 |  01/06/2023  |
+-|    122    | FPOLIS SUL                    |  01/06/2023  |
+-|    123    | RIO DO SUL                    |  01/06/2023  |
+-|    124    | LITORAL NORTE                 |  01/06/2023  |
+-|    125    | JLLE CEN/SUL                  |  01/06/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  02/06/2023  |
+-|    101    | EXPRESSO                      |  02/06/2023  |
+-|    126    | MAFRA                         |  02/06/2023  |
+-|    127    | BRUSQUE GASPAR                |  02/06/2023  |
+-|    128    | BNU NOR/OES                   |  02/06/2023  |
+-|    129    | CHAPEC�                       |  02/06/2023  |
+-|    130    | LAGES                         |  02/06/2023  |
+-+-----------+-------------------------------+--------------+
+\ No newline at end of file
+Index: lib/arquivos/relatorio/programacao/periodo 17-07-2023 a 21-07-2023.txt
+===================================================================
+diff --git a/lib/arquivos/relatorio/programacao/periodo 17-07-2023 a 21-07-2023.txt b/lib/arquivos/relatorio/programacao/periodo 17-07-2023 a 21-07-2023.txt
+deleted file mode 100644
+--- a/lib/arquivos/relatorio/programacao/periodo 17-07-2023 a 21-07-2023.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ /dev/null	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
+@@ -1,47 +0,0 @@
+-17/07/2023 a 21/07/2023
+-+-----------+-------------------------------+--------------+
+-|     OC    |           ROTEIRO             |     DATA     |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  17/07/2023  |
+-|    101    | EXPRESSO                      |  17/07/2023  |
+-|    102    | BALNE�RIO CAMBORIU            |  17/07/2023  |
+-|    103    | ITAJAI                        |  17/07/2023  |
+-|    104    | TIJUCAS PALHO�A               |  17/07/2023  |
+-|    105    | TUBAR�O                       |  17/07/2023  |
+-|    106    | FPOLIS CENTRO                 |  17/07/2023  |
+-|    107    | S�O JOS�                      |  17/07/2023  |
+-|    108    | BNU SUL/LES                   |  17/07/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  18/07/2023  |
+-|    101    | EXPRESSO                      |  18/07/2023  |
+-|    109    | ARARANGU�                     |  18/07/2023  |
+-|    110    | S�O JOS�                      |  18/07/2023  |
+-|    111    | FPOLIS CENTRO                 |  18/07/2023  |
+-|    112    | JLLE CEN/NOR                  |  18/07/2023  |
+-|    113    | BNU NOR/OES                   |  18/07/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  19/07/2023  |
+-|    101    | EXPRESSO                      |  19/07/2023  |
+-|    114    | JARAGU� DO SUL                |  19/07/2023  |
+-|    115    | S�O JOS�                      |  19/07/2023  |
+-|    116    | FPOLIS NORTE                  |  19/07/2023  |
+-|    117    | PORTO BELO                    |  19/07/2023  |
+-|    118    | BNU SUL/LES                   |  19/07/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  20/07/2023  |
+-|    101    | EXPRESSO                      |  20/07/2023  |
+-|    119    | BALNE�RIO CAMBORIU            |  20/07/2023  |
+-|    120    | ITAJAI                        |  20/07/2023  |
+-|    121    | FPOLIS CENTRO                 |  20/07/2023  |
+-|    122    | FPOLIS SUL                    |  20/07/2023  |
+-|    123    | RIO DO SUL                    |  20/07/2023  |
+-|    124    | LITORAL NORTE                 |  20/07/2023  |
+-|    125    | JLLE CEN/SUL                  |  20/07/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  21/07/2023  |
+-|    101    | EXPRESSO                      |  21/07/2023  |
+-|    126    | MAFRA                         |  21/07/2023  |
+-|    127    | BRUSQUE GASPAR                |  21/07/2023  |
+-|    128    | BNU NOR/OES                   |  21/07/2023  |
+-|    129    | CHAPEC�                       |  21/07/2023  |
+-+-----------+-------------------------------+--------------+
+\ No newline at end of file
+Index: lib/arquivos/relatorio/programacao/periodo 21-08-2023 a 25-08-2023.txt
+===================================================================
+diff --git a/lib/arquivos/relatorio/programacao/periodo 21-08-2023 a 25-08-2023.txt b/lib/arquivos/relatorio/programacao/periodo 21-08-2023 a 25-08-2023.txt
+deleted file mode 100644
+--- a/lib/arquivos/relatorio/programacao/periodo 21-08-2023 a 25-08-2023.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ /dev/null	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
+@@ -1,48 +0,0 @@
+-21/08/2023 a 25/08/2023
+-+-----------+-------------------------------+--------------+
+-|     OC    |           ROTEIRO             |     DATA     |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  21/08/2023  |
+-|    101    | EXPRESSO                      |  21/08/2023  |
+-|    102    | BALNE�RIO CAMBORIU            |  21/08/2023  |
+-|    103    | ITAJAI                        |  21/08/2023  |
+-|    104    | TIJUCAS PALHO�A               |  21/08/2023  |
+-|    105    | TUBAR�O                       |  21/08/2023  |
+-|    106    | FPOLIS CENTRO                 |  21/08/2023  |
+-|    107    | S�O JOS�                      |  21/08/2023  |
+-|    108    | BNU SUL/LES                   |  21/08/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  22/08/2023  |
+-|    101    | EXPRESSO                      |  22/08/2023  |
+-|    109    | ARARANGU�                     |  22/08/2023  |
+-|    110    | S�O JOS�                      |  22/08/2023  |
+-|    111    | FPOLIS CENTRO                 |  22/08/2023  |
+-|    112    | JLLE CEN/NOR                  |  22/08/2023  |
+-|    113    | BNU NOR/OES                   |  22/08/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  23/08/2023  |
+-|    101    | EXPRESSO                      |  23/08/2023  |
+-|    114    | JARAGU� DO SUL                |  23/08/2023  |
+-|    115    | S�O JOS�                      |  23/08/2023  |
+-|    116    | FPOLIS NORTE                  |  23/08/2023  |
+-|    117    | PORTO BELO                    |  23/08/2023  |
+-|    118    | BNU SUL/LES                   |  23/08/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  24/08/2023  |
+-|    101    | EXPRESSO                      |  24/08/2023  |
+-|    119    | BALNE�RIO CAMBORIU            |  24/08/2023  |
+-|    120    | ITAJAI                        |  24/08/2023  |
+-|    121    | FPOLIS CENTRO                 |  24/08/2023  |
+-|    122    | FPOLIS SUL                    |  24/08/2023  |
+-|    123    | RIO DO SUL                    |  24/08/2023  |
+-|    124    | LITORAL NORTE                 |  24/08/2023  |
+-|    125    | JLLE CEN/SUL                  |  24/08/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  25/08/2023  |
+-|    101    | EXPRESSO                      |  25/08/2023  |
+-|    126    | MAFRA                         |  25/08/2023  |
+-|    127    | BRUSQUE GASPAR                |  25/08/2023  |
+-|    128    | BNU NOR/OES                   |  25/08/2023  |
+-|    129    | CHAPEC�                       |  25/08/2023  |
+-|    130    | LAGES                         |  25/08/2023  |
+-+-----------+-------------------------------+--------------+
+\ No newline at end of file
+Index: lib/arquivos/relatorio/programacao/periodo 04-09-2023 a 08-09-2023.txt
+===================================================================
+diff --git a/lib/arquivos/relatorio/programacao/periodo 04-09-2023 a 08-09-2023.txt b/lib/arquivos/relatorio/programacao/periodo 04-09-2023 a 08-09-2023.txt
+deleted file mode 100644
+--- a/lib/arquivos/relatorio/programacao/periodo 04-09-2023 a 08-09-2023.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ /dev/null	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
+@@ -1,43 +0,0 @@
+-04/09/2023 a 08/09/2023
+-+-----------+-------------------------------+--------------+
+-|     OC    |           ROTEIRO             |     DATA     |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  04/09/2023  |
+-|    101    | EXPRESSO                      |  04/09/2023  |
+-|    102    | BALNE�RIO CAMBORIU            |  04/09/2023  |
+-|    103    | ITAJAI                        |  04/09/2023  |
+-|    104    | TIJUCAS                       |  04/09/2023  |
+-|    105    | TUBARAO                       |  04/09/2023  |
+-|    106    | FPOLIS CENTRO                 |  04/09/2023  |
+-|    107    | S�O JOS�                      |  04/09/2023  |
+-|    108    | BNU SUL/LES                   |  04/09/2023  |
+-|    109    | ARARANGU�                     |  04/09/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  05/09/2023  |
+-|    101    | EXPRESSO                      |  05/09/2023  |
+-|    114    | JARAGU� DO SUL                |  05/09/2023  |
+-|    110    | S�O JOS�                      |  05/09/2023  |
+-|    111    | FPOLIS CENTRO                 |  05/09/2023  |
+-|    112    | JVILLE CEN/NOR                |  05/09/2023  |
+-|    113    | BNU NOR/OES                   |  05/09/2023  |
+-|    117    | PORTO BELO                    |  05/09/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  06/09/2023  |
+-|    101    | EXPRESSO                      |  06/09/2023  |
+-|    118    | BNU SUL/LES                   |  06/09/2023  |
+-|    119    | BALNE�RIO CAMBORIU            |  06/09/2023  |
+-|    120    | ITAJAI                        |  06/09/2023  |
+-|    122    | FPOLIS SUL                    |  06/09/2023  |
+-|    116    | FPOLIS NORTE                  |  06/09/2023  |
+-|    123    | RIO DO SUL                    |  06/09/2023  |
+-|    124    | LITORAL NORTE                 |  06/09/2023  |
+-|    125    | JVILLE CEN/SUL                |  06/09/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  08/09/2023  |
+-|    101    | EXPRESSO                      |  08/09/2023  |
+-|    126    | MAFRA                         |  08/09/2023  |
+-|    127    | BRUSQUE                       |  08/09/2023  |
+-|    128    | BLUMENAU                      |  08/09/2023  |
+-|    129    | CHAPECO                       |  08/09/2023  |
+-|    130    | LAGES                         |  08/09/2023  |
+-+-----------+-------------------------------+--------------+
+\ No newline at end of file
+Index: lib/arquivos/relatorio/programacao/periodo 01-09-2023 a 10-09-2023.txt
+===================================================================
+diff --git a/lib/arquivos/relatorio/programacao/periodo 01-09-2023 a 10-09-2023.txt b/lib/arquivos/relatorio/programacao/periodo 01-09-2023 a 10-09-2023.txt
+deleted file mode 100644
+--- a/lib/arquivos/relatorio/programacao/periodo 01-09-2023 a 10-09-2023.txt	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ /dev/null	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
+@@ -1,50 +0,0 @@
+-01/09/2023 a 10/09/2023
+-+-----------+-------------------------------+--------------+
+-|     OC    |           ROTEIRO             |     DATA     |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  01/09/2023  |
+-|    101    | EXPRESSO                      |  01/09/2023  |
+-|    126    | MAFRA                         |  01/09/2023  |
+-|    127    | BRUSQUE GASPAR                |  01/09/2023  |
+-|    128    | BNU NOR/OES                   |  01/09/2023  |
+-|    129    | CHAPEC�                       |  01/09/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  04/09/2023  |
+-|    101    | EXPRESSO                      |  04/09/2023  |
+-|    102    | BALNE�RIO CAMBORIU            |  04/09/2023  |
+-|    103    | ITAJAI                        |  04/09/2023  |
+-|    104    | TIJUCAS                       |  04/09/2023  |
+-|    105    | TUBARAO                       |  04/09/2023  |
+-|    106    | FPOLIS CENTRO                 |  04/09/2023  |
+-|    107    | S�O JOS�                      |  04/09/2023  |
+-|    108    | BNU SUL/LES                   |  04/09/2023  |
+-|    109    | ARARANGU�                     |  04/09/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  05/09/2023  |
+-|    101    | EXPRESSO                      |  05/09/2023  |
+-|    114    | JARAGU� DO SUL                |  05/09/2023  |
+-|    110    | S�O JOS�                      |  05/09/2023  |
+-|    111    | FPOLIS CENTRO                 |  05/09/2023  |
+-|    112    | JVILLE CEN/NOR                |  05/09/2023  |
+-|    113    | BNU NOR/OES                   |  05/09/2023  |
+-|    117    | PORTO BELO                    |  05/09/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  06/09/2023  |
+-|    101    | EXPRESSO                      |  06/09/2023  |
+-|    118    | BNU SUL/LES                   |  06/09/2023  |
+-|    119    | BALNE�RIO CAMBORIU            |  06/09/2023  |
+-|    120    | ITAJAI                        |  06/09/2023  |
+-|    122    | FPOLIS SUL                    |  06/09/2023  |
+-|    116    | FPOLIS NORTE                  |  06/09/2023  |
+-|    123    | RIO DO SUL                    |  06/09/2023  |
+-|    124    | LITORAL NORTE                 |  06/09/2023  |
+-|    125    | JVILLE CEN/SUL                |  06/09/2023  |
+-+-----------+-------------------------------+--------------+
+-|    100    | REUNIDAS                      |  08/09/2023  |
+-|    101    | EXPRESSO                      |  08/09/2023  |
+-|    126    | MAFRA                         |  08/09/2023  |
+-|    127    | BRUSQUE                       |  08/09/2023  |
+-|    128    | BLUMENAU                      |  08/09/2023  |
+-|    129    | CHAPECO                       |  08/09/2023  |
+-|    130    | LAGES                         |  08/09/2023  |
+-+-----------+-------------------------------+--------------+
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"BranchesTreeState\">\r\n    <expand>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"LOCAL_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"REMOTE_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"REMOTE_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"GROUP_NODE:origin\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"REMOTE_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"GROUP_NODE:origin\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"GROUP_NODE:update-23\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n    </expand>\r\n    <select>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"LOCAL_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"BRANCH:V2\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n    </select>\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"2bf29ebe-193b-410b-9678-76afa9938c14\" name=\"Default Changelist\" comment=\"atualização arquivos dados 21082023\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/database/comprovante.txt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/database/comprovante.txt\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/database/oc.txt\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Setup Script\" />\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Rebase.Settings\">\r\n    <option name=\"NEW_BASE\" value=\"origin/master\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$/..\" value=\"parcial\" />\r\n        <entry key=\"$PROJECT_DIR$\" value=\"agrosul\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GithubPullRequestsUISettings\">\r\n    <option name=\"hiddenUrls\">\r\n      <set>\r\n        <option value=\"https://github.com/mrcbnu/Projeto-AgroExped\" />\r\n      </set>\r\n    </option>\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"1gcYFOXmJGd9O3qhSzK85ngnTOj\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"1\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\agr-exped\\lib\\arquivos\\database\" />\r\n      <recent name=\"C:\\agr-exped\\lib\\arquivos\\relatorio\" />\r\n      <recent name=\"C:\\agr-exped\\lib\\arquivos\" />\r\n      <recent name=\"C:\\Users\\mrc_b\\Documents\\MeusProjetos\\agr-exped\\lib\\arquivos\\relatorio\" />\r\n      <recent name=\"C:\\Users\\mrc_b\\Documents\\MeusProjetos\\agr-exped\\lib\\arquivos\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\agr-exped\\lib\\arquivos\\relatorio\" />\r\n      <recent name=\"C:\\Users\\mrc_b\\Documents\\MeusProjetos\\agr-exped\\lib\\arquivos\\database\" />\r\n      <recent name=\"C:\\Users\\mrc_b\\Documents\\MeusProjetos\\agr-exped\\lib\\arquivos\\relatorio\" />\r\n      <recent name=\"C:\\Users\\mrc_b\\Documents\\MeusProjetos\\agr-exped\\lib\\arquivos\\relatorio\\programacao\" />\r\n      <recent name=\"C:\\Users\\mrc_b\\Documents\\MeusProjetos\\agr-exped\\lib\\arquivos\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Python.main\">\r\n    <configuration name=\"TESTE\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/lib/arquivos\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/lib/arquivos/TESTE.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"C:\\Users\\faturamento-01\\AppData\\Local\\anaconda3\\python.exe\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"C:\\Users\\mrc_b\\Documents\\MeusProjetos\\agr-exped\\lib\\main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"setup\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/PyMuPDF\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/PyMuPDF/setup.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"teste (2)\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/lib/arquivos\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/lib/arquivos/teste.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"teste\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/lib/arquivos/relatorio\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/lib/arquivos/relatorio/teste.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"teste2 (1)\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"agr-exped\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/lib/arquivos/relatorio\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/lib/arquivos/relatorio/teste2.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <list>\r\n      <item itemvalue=\"Python.main\" />\r\n      <item itemvalue=\"Python.setup\" />\r\n      <item itemvalue=\"Python.TESTE\" />\r\n      <item itemvalue=\"Python.teste (2)\" />\r\n      <item itemvalue=\"Python.teste2 (1)\" />\r\n      <item itemvalue=\"Python.teste\" />\r\n    </list>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Python.setup\" />\r\n        <item itemvalue=\"Python.main\" />\r\n        <item itemvalue=\"Python.teste\" />\r\n        <item itemvalue=\"Python.TESTE\" />\r\n        <item itemvalue=\"Python.teste (2)\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"2bf29ebe-193b-410b-9678-76afa9938c14\" name=\"Default Changelist\" comment=\"\" />\r\n      <created>1598415244293</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1598415244293</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"ATUALIZAÇÃO NOME DO APLICATIVO NA TELA DE ABERTURA E ENCERRAMENTO\">\r\n      <created>1684990556101</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1684990556101</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"ATUALIZAÇÃO FUNÇÃO GERAOC()\">\r\n      <created>1684992986563</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1684992986563</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"ATUALIZAÇÃO FUNÇÃO GERAOC()\">\r\n      <created>1684993026835</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1684993026835</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"ATUALIZAÇÃO FUNÇÃO GERAOC()\">\r\n      <created>1684993040863</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1684993040863</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"ATUALIZAÇÃO FUNÇÃO geraPlacasPicking()\">\r\n      <created>1685018779174</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1685018779174</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"ATUALIZAÇÃO CODIFICAÇÃO oc_semana1.txt\">\r\n      <created>1685019893612</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1685019893612</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00007\" summary=\"release focus v1.260523\">\r\n      <created>1685096656737</created>\r\n      <option name=\"number\" value=\"00007\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1685096656737</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00008\" summary=\"release focus v1.02062023\">\r\n      <created>1685678711926</created>\r\n      <option name=\"number\" value=\"00008\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1685678711926</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00009\" summary=\"ajustes agrosul 09062023\">\r\n      <created>1686342635346</created>\r\n      <option name=\"number\" value=\"00009\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1686342635346</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00010\" summary=\"atualização arquivos dados 21082023\">\r\n      <created>1692629724190</created>\r\n      <option name=\"number\" value=\"00010\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1692629724190</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00011\" summary=\"atualização arquivos dados 21082023\">\r\n      <created>1692629747996</created>\r\n      <option name=\"number\" value=\"00011\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1692629747996</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"12\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"V2\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <ignored-roots>\r\n      <path value=\"$PROJECT_DIR$/..\" />\r\n    </ignored-roots>\r\n    <MESSAGE value=\"ATUALIZAÇÃO NOME DO APLICATIVO NA TELA DE ABERTURA E ENCERRAMENTO\" />\r\n    <MESSAGE value=\"ATUALIZAÇÃO FUNÇÃO GERAOC()\" />\r\n    <MESSAGE value=\"ATUALIZAÇÃO FUNÇÃO geraPlacasPicking()\" />\r\n    <MESSAGE value=\"ATUALIZAÇÃO CODIFICAÇÃO oc_semana1.txt\" />\r\n    <MESSAGE value=\"release focus v1.260523\" />\r\n    <MESSAGE value=\"release focus v1.02062023\" />\r\n    <MESSAGE value=\"ajustes agrosul 09062023\" />\r\n    <MESSAGE value=\"atualização arquivos dados 21082023\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"atualização arquivos dados 21082023\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/.idea/workspace.xml	(date 1705870995621)
+@@ -34,17 +34,52 @@
+     </select>
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="atualização arquivos dados 21082023">
++    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="ajustes agrosul 09062023">
++      <change beforePath="$PROJECT_DIR$/.idea/agr-exped.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/agr-exped.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/comprovante.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/database/comprovante.txt" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc.txt" beforeDir="false" />
+       <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 01-09-2023 a 10-09-2023.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 04-09-2023 a 08-09-2023.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 05-06-2023 a 09-06-2023.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 17-07-2023 a 21-07-2023.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 21-08-2023 a 25-08-2023.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 29-05-2023 a 02-06-2023.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/periodo 31-07-2023 a 04-08-2023.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 03-07-2023 a 07-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 04-09-2023 a 08-09-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 07-08-2023 a 11-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 10-07-2023 a 14-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 12-06-2023 a 16-06-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 14-08-2023 a 18-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 17-07-2023 a 21-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 19-06-2023 a 23-06-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 21-08-2023 a 25-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 24-07-2023 a 28-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 26-06-2023 a 30-06-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placas 31-07-2023 a 04-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/placasPicking.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/prog 10-07-23.txt" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 03-07-2023 a 07-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 04-09-2023 a 08-09-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 07-08-2023 a 11-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 10-07-2023 a 14-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 12-06-2023 a 16-06-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 14-08-2023 a 18-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 17-07-2023 a 21-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 19-06-2023 a 23-06-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 21-08-2023 a 25-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 24-07-2023 a 28-07-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 26-06-2023 a 30-06-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/roteiro 31-07-2023 a 04-08-2023.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorios.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -91,7 +126,7 @@
+   </component>
+   <component name="PropertiesComponent">{
+   &quot;keyToString&quot;: {
+-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
++    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+   }
+ }</component>
+   <component name="RecentsManager">
+@@ -132,7 +167,7 @@
+       <option name="INPUT_FILE" value="" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
++    <configuration name="fusion" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="agr-exped" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+       <option name="PARENT_ENVS" value="true" />
+@@ -140,11 +175,11 @@
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
+       <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/lib/arquivos/relatorio" />
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+       <option name="EMULATE_TERMINAL" value="false" />
+@@ -153,16 +188,16 @@
+       <option name="INPUT_FILE" value="" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+       <module name="agr-exped" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+       <option name="PARENT_ENVS" value="true" />
+       <envs>
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
+-      <option name="SDK_HOME" value="C:\Users\faturamento-01\AppData\Local\anaconda3\python.exe" />
++      <option name="SDK_HOME" value="" />
+       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+-      <option name="IS_MODULE_SDK" value="false" />
++      <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+@@ -181,12 +216,12 @@
+       <envs>
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
+-      <option name="SDK_HOME" value="" />
++      <option name="SDK_HOME" value="C:\Users\faturamento-01\AppData\Local\anaconda3\python.exe" />
+       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+-      <option name="IS_MODULE_SDK" value="true" />
++      <option name="IS_MODULE_SDK" value="false" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="SCRIPT_NAME" value="C:\Users\mrc_b\Documents\MeusProjetos\agr-exped\lib\main.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+       <option name="EMULATE_TERMINAL" value="false" />
+@@ -195,7 +230,7 @@
+       <option name="INPUT_FILE" value="" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="setup" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="agr-exped" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+       <option name="PARENT_ENVS" value="true" />
+@@ -203,11 +238,11 @@
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
+       <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PyMuPDF" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PyMuPDF/setup.py" />
++      <option name="SCRIPT_NAME" value="C:\Users\mrc_b\Documents\MeusProjetos\agr-exped\lib\main.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+       <option name="EMULATE_TERMINAL" value="false" />
+@@ -216,7 +251,7 @@
+       <option name="INPUT_FILE" value="" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="teste (2)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++    <configuration name="setup" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="agr-exped" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+       <option name="PARENT_ENVS" value="true" />
+@@ -224,11 +259,11 @@
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
+       <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/lib/arquivos" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PyMuPDF" />
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib/arquivos/teste.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PyMuPDF/setup.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+       <option name="EMULATE_TERMINAL" value="false" />
+@@ -281,19 +316,19 @@
+     </configuration>
+     <list>
+       <item itemvalue="Python.main" />
++      <item itemvalue="Python.fusion" />
+       <item itemvalue="Python.setup" />
+       <item itemvalue="Python.TESTE" />
+-      <item itemvalue="Python.teste (2)" />
+       <item itemvalue="Python.teste2 (1)" />
+       <item itemvalue="Python.teste" />
+     </list>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Python.fusion" />
+         <item itemvalue="Python.setup" />
+         <item itemvalue="Python.main" />
+         <item itemvalue="Python.teste" />
+         <item itemvalue="Python.TESTE" />
+-        <item itemvalue="Python.teste (2)" />
+       </list>
+     </recent_temporary>
+   </component>
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.10 (agr-exped)\" project-jdk-type=\"Python SDK\" />\r\n  <component name=\"PyPackaging\">\r\n    <option name=\"earlyReleasesAsUpgrades\" value=\"true\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/.idea/misc.xml	(date 1693588461555)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (agr-exped)" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (2)" project-jdk-type="Python SDK" />
+   <component name="PyPackaging">
+     <option name="earlyReleasesAsUpgrades" value="true" />
+   </component>
+Index: .idea/agr-exped.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\">\r\n      <excludeFolder url=\"file://$MODULE_DIR$/venv\" />\r\n    </content>\r\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.10 (agr-exped)\" jdkType=\"Python SDK\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/agr-exped.iml b/.idea/agr-exped.iml
+--- a/.idea/agr-exped.iml	(revision 9aeedbb88f3d4c097713dc79d6b58de6ced78999)
++++ b/.idea/agr-exped.iml	(date 1693588443495)
+@@ -4,7 +4,7 @@
+     <content url="file://$MODULE_DIR$">
+       <excludeFolder url="file://$MODULE_DIR$/venv" />
+     </content>
+-    <orderEntry type="jdk" jdkName="Python 3.10 (agr-exped)" jdkType="Python SDK" />
++    <orderEntry type="jdk" jdkName="Python 3.10 (2)" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file
+diff --git a/lib/arquivos/relatorio/programacao/prog 10-07-23.txt b/lib/arquivos/relatorio/programacao/prog 10-07-23.txt
+deleted file mode 100644
