@@ -34,8 +34,17 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="atualização fusion - novas cores escalação e imagens das palcas dos carros">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/python-package-conda.yml" beforeDir="false" />
+    <list default="true" id="2bf29ebe-193b-410b-9678-76afa9938c14" name="Default Changelist" comment="restabelecimento">
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/database/oc_semana1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/ordemcarga.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/comprovantes/comprovante.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/fusion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/poppler-0.68.0/bin/BINARIES" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/poppler-0.68.0/bin/BINARIES" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/controle_KM.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/escalacao.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/imagem_1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorio/programacao/vistoria.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/arquivos/relatorios.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/arquivos/relatorios.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -390,7 +399,15 @@
       <option name="project" value="LOCAL" />
       <updated>1729569532313</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="restabelecimento">
+      <option name="closed" value="true" />
+      <created>1738024724709</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1738024724709</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -430,16 +447,7 @@
     <MESSAGE value="atualização arquivos dados 21082023" />
     <MESSAGE value="atualização arquivos dados 01-09-2023" />
     <MESSAGE value="atualização fusion - novas cores escalação e imagens das palcas dos carros" />
-    <option name="LAST_COMMIT_MESSAGE" value="atualização fusion - novas cores escalação e imagens das palcas dos carros" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/interface/valida.py</url>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="restabelecimento" />
+    <option name="LAST_COMMIT_MESSAGE" value="restabelecimento" />
   </component>
 </project>

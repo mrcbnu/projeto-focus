@@ -205,7 +205,9 @@ def geraListagemRoteiro(arquivo, ini, fim):
     pdf.setLineWidth(1.5)
     diaAux = ''
     pag = 1
-
+    lin = 750
+    tex = 715
+    col = 700
     try:
         arq = open(arquivo, 'r')
     except:
@@ -219,59 +221,63 @@ def geraListagemRoteiro(arquivo, ini, fim):
             data1 = dado[2] = datetime.strftime(dado[2], '%d/%m/%Y')
             data = datetime.strptime(dado[2], '%d/%m/%Y')
             diaSem = diaSemana(data)
+            pdf.setLineWidth(1.5)
 
             if pag == 1:
-                # coordenadas iniciais das linhas, colunas e texto 1º pagina
-                lin = 750
-                tex = 715
-                col = 700
+                #  TABELA CABEÇALHO PRIMEIRA PAGINA
+                pdf.setFont('Helvetica-Bold', 20)
+                pdf.line(10, 800, 580, 800)
+                pdf.line(10, 800, 10, 770)
+                pdf.drawString(20, 777, 'DATA')
+                pdf.line(126, 800, 126, 770)
+                pdf.drawString(136, 777, data1)
+                pdf.line(450, 800, 450, 770)
+                pdf.drawString(460, 777, diaSem)
+                pdf.line(580, 800, 580, 770)
+                pdf.line(10, 770, 580, 770)
                 diaAux = diaSem
                 pag += 1
 
-            elif diaSem != diaAux:
+            if diaSem != diaAux:
                 pdf.showPage()  # QUEBRA PAGINA
-                # coordenadas iniciais das linhas, colunas e texto, outras paginas
                 lin = 750
                 tex = 715
                 col = 700
+
+                # TABELA CABEÇALHO DAS OUTRAS PAGIANS
+                pdf.setLineWidth(1.5)
+                pdf.setFont('Helvetica-Bold', 20)
+                pdf.line(10, 800, 580, 800)
+                pdf.line(10, 800, 10, 770)
+                pdf.drawString(20, 777, 'DATA')
+                pdf.line(126, 800, 126, 770)
+                pdf.drawString(136, 777, data1)
+                pdf.line(450, 800, 450, 770)
+                pdf.drawString(460, 777, diaSem)
+                pdf.line(580, 800, 580, 770)
+                pdf.line(10, 770, 580, 770)
+
                 diaAux = diaSem
 
-
-            # TABELA CABEÇALHO
-            pdf.setLineWidth(1.5)
-            pdf.setFont('Helvetica-Bold', 20)
-            pdf.line(10, 800, 580, 800)
-            pdf.line(10, 800, 10, 770)
-            pdf.drawString(20, 777, 'DATA')
-            pdf.line(126, 800, 126, 770)
-            pdf.drawString(136, 777, data1)
-            pdf.line(450, 800, 450, 770)
-            pdf.drawString(460, 777, diaSem)
-            pdf.line(580, 800, 580, 770)
-            pdf.line(10, 770, 580, 770)
-
             # TABELA PRINCIPAL
-            pdf.setLineWidth(1.5)
-            pdf.line(10, lin, 580, lin)  # __
-            pdf.line(10, lin, 10, col)  # |
+            pdf.line(10, lin, 580, lin)  # ___
+            pdf.line(10, lin, 10, col)
             pdf.setFont('Helvetica-Bold', 30)
             pdf.drawString(20, tex, dado[0])
-            pdf.line(126, lin, 126, col)  # |
+            pdf.line(126, lin, 126, col)
             pdf.setFont('Helvetica-Bold', 20)
             pdf.drawString(136, tex, dado[1])
-            pdf.line(380, lin, 380, col)  # |
-            pdf.line(450, lin, 450, col)  # |
-            pdf.line(580, lin, 580, col)  # |
-            lin -= 50  # valor da posição da linha __
-            tex -= 50  # valor da posição do texto
-            col -= 50  # valor da posição da coluna |
-            pdf.line(10, lin, 580, lin)  #__
-
-            # RODAPE
+            pdf.line(380, lin, 380, col)
+            pdf.line(450, lin, 450, col)
+            pdf.line(580, lin, 580, col)
+            lin -= 50
+            tex -= 50
+            col -= 50
+            pdf.line(10, lin, 580, lin)
             pdf.setLineWidth(0.5)
-            pdf.line(10, 20, 580, 20)
+            pdf.line(10, 20, 580,20)
             pdf.setFont('Helvetica', 8)
-            pdf.drawString(10, 10, 'Gerado por FOCUS v1.31072024')
+            pdf.drawString(10, 10, 'Gerado por FOCUS v1.02062023')
 
     pdf.save()
     while True:

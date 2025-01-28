@@ -4,12 +4,12 @@ from time import sleep, strptime
 from lib.arquivos.ordemcarga import *
 from lib.arquivos.relatorios import pdftojpg
 
-
 def mm(x):
     return x / 0.352777
 
 
 def controle(dados):
+
     print('GERANDO RELATÓRIO CONTROLE DE QUILOMETRAGEM')
     escala_df = dados
     # excluir linhas das transportadoras expresso e reunidas
@@ -287,7 +287,7 @@ def escalacao(dados):
         ajudante2 = str(dado['Ajudante 2'])
         placa = f"lib/arquivos/database/{dado['Veículo']}.png"
         div.setFont('Helvetica-Bold', 20)
-        div.setFillColorRGB(0, 1, 1)  # verde
+        div.setFillColorRGB(0, 1, 0.2)  # verde
         div.rect(mm(5), mm(linInf), mm(250), mm(20), fill=1)
         div.setFillColorRGB(0, 0, 0)
         div.line(mm(5), mm(linSup), mm(5), mm(linInf))  # coluna
@@ -297,7 +297,10 @@ def escalacao(dados):
         div.line(mm(5), mm(linInf), mm(255), mm(linInf))  # linha inferior
         div.drawString(mm(7), mm(tex), dado['Destino'])
         # div.drawCentredString(mm(115), mm(tex), dado['Veículo'])
-        div.drawImage(placa, mm(91), mm(linInf + 2), 135, 44)
+        if arqExiste(placa):
+            div.drawImage(placa, mm(91), mm(linInf + 2), 135, 44)
+        else:
+            div.drawCentredString(mm(115), mm(tex), dado['Veículo'])
         div.setFont('Helvetica-Bold', 18)
         if ajudante2 != 'nan':
             div.drawString(mm(143), mm(tex + 6), dado['Motorista'])
